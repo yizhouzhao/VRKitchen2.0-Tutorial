@@ -48,8 +48,8 @@ html_css_files = ["theme.css"]
 # -- Options for EPUB output
 epub_show_urls = 'footnote'
 
-import os
-import sys
-sys.path.insert(0, os.path.abspath(os.path.join('..', '..', 'genmotion')))
+# import os
+# import sys
+# sys.path.insert(0, os.path.abspath(os.path.join('..', '..', 'genmotion')))
 
-autodoc_mock_imports = ["bpy", "numpy", "torch", "matplotlib", "IPython", "pickle", "genmotion"]
+# autodoc_mock_imports = ["bpy", "numpy", "torch", "matplotlib", "IPython", "pickle", "genmotion"]
