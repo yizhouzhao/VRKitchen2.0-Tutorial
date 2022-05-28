@@ -1,8 +1,8 @@
 [build-system]
-requires = ["flit_core >=3.2,<4"]
-build-backend = "flit_core.buildapi"
+requires = ["setuptools", "wheel"]
+
 
 [project]
-name = "lumache"
-authors = [{name = "Graziella", email = "graziella@lumache"}]
+name = "vrkitchen2.0"
+authors = [{name = "Yizhou Zhao", email = "yizhouzhao@g.ucla.edu"}]
 dynamic = ["version", "description"]
