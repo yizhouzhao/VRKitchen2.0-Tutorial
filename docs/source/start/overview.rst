@@ -52,12 +52,12 @@ In this tutorial (:ref:`Tutorial Robot`), we show how to import a `Franka Emika 
    :alt: franka1
    :width: 100%
 
-Demo 5: (Put together) Data labeling with scenes, articulated objects, liquid and robots
-################################################################
+Demo 5: (Put together) Data labeling 
+##############################################################################################
 
 Machine Learning and Deep Learning have been successful because of the increasing amounts of data  and the increasing amounts of computing power (e.g., CPUs, GPUs, TPUs). However, this type of "trainable data" for Embodied AI and robotics are still limited especially when we consider them in virtual environment. 
 
-To enrich the dataset for robotics and EAI community, this tutorial (:ref:`Tutorial Data Labeling`) teaches how to integrete everything together to label a robot task in a *real* scene with *real* physics.
+To enrich the dataset for robotics and EAI community, this tutorial (:ref:`Tutorial Data Labeling`) teaches how to integrete everything together to label a robot task in a *real* scene with *real* physics with scenes, articulated objects, liquid and robots.
 
 
 .. image:: ./img/data_labeling1.*

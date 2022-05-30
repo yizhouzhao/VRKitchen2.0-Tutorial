@@ -27,6 +27,7 @@ Get Started with Omniverse Create Extension
    :caption: Getting Started
 
    start/overview
+   start/license
 
 .. toctree::
    :maxdepth: 2
