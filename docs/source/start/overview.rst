@@ -41,10 +41,6 @@ In this tutorial: :ref:`Tutorial Liquid`, we show how to calculate and build liq
    :alt: cup_water1
    :width: 100%
 
-
-.. bibliography:: ../refs.bib
-
-
 Demo 4: Set up Robot 
 ################################################################
 
@@ -54,6 +50,18 @@ In this tutorial (:ref:`Tutorial Robot`), we show how to import a `Franka Emika 
 
 .. image:: ./img/franka1.*
    :alt: franka1
+   :width: 100%
+
+Demo 5: (Put together) Data labeling with scenes, articulated objects, liquid and robots
+################################################################
+
+Machine Learning and Deep Learning have been successful because of the increasing amounts of data  and the increasing amounts of computing power (e.g., CPUs, GPUs, TPUs). However, this type of "trainable data" for Embodied AI and robotics are still limited especially when we consider them in virtual environment. 
+
+To enrich the dataset for robotics and EAI community, this tutorial (:ref:`Tutorial Data Labeling`) teaches how to integrete everything together to label a robot task in a *real* scene with *real* physics.
+
+
+.. image:: ./img/data_labeling1.*
+   :alt: data_labeling1
    :width: 100%
 
 

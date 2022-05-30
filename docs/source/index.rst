@@ -37,7 +37,8 @@ Get Started with Omniverse Create Extension
    tutorial/indoor   
    tutorial/articulated_object  
    tutorial/liquid  
-   tutorial/robot  
+   tutorial/robot 
+   tutorial/data_label 
    
 
 .. toctree::
