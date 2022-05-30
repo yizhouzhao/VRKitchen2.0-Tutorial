@@ -6,7 +6,7 @@ A wide range of software and datasets contributes to this toolkit. To encourage 
 Omniverse      |Omniverse|
 ########################################
 
-.. |HDM05_Licence| image:: https://img.shields.io/badge/license-individual_enterprise-green
+.. |Omniverse| image:: https://img.shields.io/badge/license-individual_enterprise-green
    :target: https://www.nvidia.com/en-us/omniverse/download/
    :alt: Licence
 
