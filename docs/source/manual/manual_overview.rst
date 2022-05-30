@@ -1,2 +1,2 @@
-Extented Omniverse Kit documentation
+Extented Omniverse Kit Use Manual
 ============================================
