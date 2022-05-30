@@ -38,9 +38,9 @@ Get Started with Omniverse Create Extension
 .. toctree::
    :maxdepth: 2
    :hidden:
-   :caption: Tutorial
+   :caption: Omniverse Manual
 
-   docu/documentation_overview
+   manual/manual_overview
 
 .. toctree::
    :maxdepth: 2
