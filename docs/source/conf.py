@@ -67,6 +67,14 @@ html_css_files = ["theme.css"]
 # -- Options for EPUB output
 epub_show_urls = 'footnote'
 
+from sphinx.builders.html import StandaloneHTMLBuilder
+StandaloneHTMLBuilder.supported_image_types = [
+    'image/svg+xml',
+    'image/gif',
+    'image/png',
+    'image/jpeg'
+]
+
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath(os.path.join('..', '..', 'genmotion')))
