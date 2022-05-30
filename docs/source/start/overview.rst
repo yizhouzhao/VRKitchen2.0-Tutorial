@@ -24,8 +24,10 @@ Demo 2: Parsing articulated objects
 
 Articulated objects can be defined as objects composed of more than one rigid parts. In our daily life, humans are constantly interacting with a lot of articulated objects such as *door, keyboard, light switch,* and e.t.c. The rigidbody, softbody, articulated object, and liquid compose a large part of our interaction with the world.
 
-In this tutorial: :ref:`Tutorial Articulated Object`, we present how to parse articulated objects in SAPIEN (a realistic and physics-rich simulated environment) into `Omniverse`, and present their potential applications for dynmaic controls in the virtual environment.
+In this tutorial: :ref:`Tutorial Articulated Object`, we present how to parse articulated objects in SAPIEN :cite:`xiang2020sapien` (a realistic and physics-rich simulated environment) into `Omniverse`, and present their potential applications for dynmaic controls in the virtual environment.
 
 .. image:: ./img/articulated_body1.png
    :alt: articulated_body1
    :width: 100%
+
+.. bibliography:: refs.bib
