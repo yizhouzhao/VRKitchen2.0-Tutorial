@@ -36,6 +36,8 @@ Get Started with Omniverse Create Extension
    tutorial/extension
    tutorial/indoor   
    tutorial/articulated_object  
+   tutorial/liquid  
+   
 
 .. toctree::
    :maxdepth: 2

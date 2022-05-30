@@ -30,4 +30,16 @@ In this tutorial: :ref:`Tutorial Articulated Object`, we present how to parse ar
    :alt: articulated_body1
    :width: 100%
 
+Demo 3: Set up liquid 
+################################################################
+
+Research on studies of softbodies and liquid is very prolific and already achieved important success, although with very different technological appliciable level. The interaction with liquid and softbody in Embodied AI is by far the most productive topic. 
+
+In this tutorial: :ref:`Tutorial Liquid`, we show how to calculate and build liquid in `Omniverse`.
+
+.. image:: ./img/cup_water1.*
+   :alt: cup_water1
+   :width: 100%
+
+
 .. bibliography:: ../refs.bib
