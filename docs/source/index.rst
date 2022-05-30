@@ -34,6 +34,7 @@ Get Started with Omniverse Create Extension
    :caption: Tutorial
 
    tutorial/extension
+   tutorial/indoor
 
 .. toctree::
    :maxdepth: 2
