@@ -30,4 +30,4 @@ In this tutorial: :ref:`Tutorial Articulated Object`, we present how to parse ar
    :alt: articulated_body1
    :width: 100%
 
-.. bibliography:: refs.bib
+.. bibliography:: ../refs.bib
