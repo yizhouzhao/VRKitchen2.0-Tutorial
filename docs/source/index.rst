@@ -27,3 +27,25 @@ Get Started with Omniverse Create Extension
    :caption: Getting Started
 
    start/overview
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Tutorial
+
+   tutorial/extension
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Tutorial
+
+   docu/documentation_overview
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: API
+
+   api/api_overview
+
