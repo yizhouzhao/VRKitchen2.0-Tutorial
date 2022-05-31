@@ -10,20 +10,21 @@ This tutorial helpes you generate photo-realistic and physics-reliable indoor en
 
 This documentation also offers a *simple* and *intuitive* API despite the `official documentation <https://docs.omniverse.nvidia.com/py/kit/docs/api/>`_ 
 
+Source code
+------------------------------------------------------
 
 The source code is available on `Github <https://https://github.com/yizhouzhao/GenMotion>`_
 
 .. note::
 
-   This project is under active development.
+   This project is under active development. [06/01/2022]
 
 
-Get Started with Omniverse Create Extension
+Contents
 ------------------------------------------------------
 
 .. toctree::
    :maxdepth: 2
-   :hidden:
    :caption: Getting Started
 
    start/overview
@@ -31,7 +32,6 @@ Get Started with Omniverse Create Extension
 
 .. toctree::
    :maxdepth: 2
-   :hidden:
    :caption: Tutorial
 
    tutorial/extension

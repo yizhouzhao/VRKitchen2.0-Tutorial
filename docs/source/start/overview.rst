@@ -2,7 +2,7 @@ Toolkit overview
 ===============================================================
 
 To facilitate the study of **indoor scene building** methods and their potential
-applications for `robotics`, `animation`, and `Embodied AI`, we introduce VRKITCHEN2.0: a toolkit built by NVIDIA OMNIVERSE that provides flexible pipelines for indoor scene building, scene randomizing, and robotic controls. 
+applications for ``robotics``, ``animation``, and ``Embodied AI``, we introduce VRKITCHEN2.0: a toolkit built by NVIDIA OMNIVERSE that provides flexible pipelines for indoor scene building, scene randomizing, and robotic controls. 
 
 Besides, by combining Python coding in the animation software VRKITCHEN2.0 can assist researches in
 creating real-time training and control for robotics in the future.
