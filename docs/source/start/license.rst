@@ -14,7 +14,7 @@ Omniverse      |Omniverse|
    :alt: Licence
 
 .. image:: ./license/omniverse.png
-   :width: 100%
+   :width: 40%
    :alt: omniverse
 
 `NVIDIA Omniverse <https://www.nvidia.com/en-us/omniverse/>`_ is an easily extensible platform for 3D design collaboration and scalable multi-GPU, real-time, true-to-reality simulation. Omniverse revolutionizes the way we create and develop as individuals and work together as teams, bringing more creative possibilities and efficiency to 3D creators, developers and enterprises.
