@@ -47,3 +47,16 @@ SAPIEN Asset      |SAPIEN|
    :alt: sapien
 
 `PartNet-Mobility dataset in SAPIEN <https://sapien.ucsd.edu/>`_ is a collection of about 2,000 articulated objects with motion annotations and rendernig material. The dataset powers research for generalizable computer vision and manipulation. The dataset is a continuation of ShapeNet and PartNet.
+
+Ai2Thor Asset      |Ai2Thor|
+*****************************************
+
+.. |SAPIEN| image:: https://img.shields.io/badge/license-ai2thor-green
+   :target: https://github.com/allenai/ai2thor/blob/main/LICENSE
+   :alt: Licence
+
+.. image:: ./license/ai2thor.png
+   :width: 100%
+   :alt: ai2thor
+
+`PartNet-Mobility dataset in SAPIEN <https://sapien.ucsd.edu/>`_ is a near photo-realistic interactable framework for Embodied AI agents. It contains 200+ scenes, 2600+ objects, and many other key features related to robotics and machine learning.
