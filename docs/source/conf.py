@@ -41,7 +41,7 @@ html_theme_options = {
     'logo_only': True
 }
 
-html_static_path = ['_static']
+html_static_path = []
 
 html_css_files = ["theme.css"]
 
