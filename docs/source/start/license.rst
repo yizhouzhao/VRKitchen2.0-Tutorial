@@ -51,12 +51,28 @@ SAPIEN Asset      |SAPIEN|
 Ai2Thor Asset      |Ai2Thor|
 *****************************************
 
-.. |SAPIEN| image:: https://img.shields.io/badge/license-ai2thor-green
+.. |Ai2Thor| image:: https://img.shields.io/badge/license-ai2thor-green
    :target: https://github.com/allenai/ai2thor/blob/main/LICENSE
    :alt: Licence
 
-.. image:: ./license/ai2thor.png
+.. image:: ./license/ai2thor.jpg
    :width: 100%
    :alt: ai2thor
 
-`PartNet-Mobility dataset in SAPIEN <https://sapien.ucsd.edu/>`_ is a near photo-realistic interactable framework for Embodied AI agents. It contains 200+ scenes, 2600+ objects, and many other key features related to robotics and machine learning.
+`Ai2Thor <https://ai2thor.allenai.org/>`_ is a near photo-realistic interactable framework for Embodied AI agents. It contains 200+ scenes, 2600+ objects, and many other key features related to robotics and machine learning.
+
+Tool
+########################################
+
+Trescope     |Trescope|
+*****************************************
+
+.. |Trescope| image:: https://img.shields.io/badge/license-trescope-green
+   :target: https://github.com/alibaba/Trescope/blob/main/LICENSE
+   :alt: Licence
+
+.. image:: ./license/trescope.png
+   :width: 100%
+   :alt: trescope
+
+`Trescope <https://github.com/alibaba/Trescope>`_ is a comprehensive 3D machine learning development tool devoted to improve developing experience and speed in 3D field, which helps researchers and developers to label, debug, visualize various 3D data.
