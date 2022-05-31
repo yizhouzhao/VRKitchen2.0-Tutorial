@@ -76,3 +76,16 @@ Trescope     |Trescope|
    :alt: trescope
 
 `Trescope <https://github.com/alibaba/Trescope>`_ is a comprehensive 3D machine learning development tool devoted to improve developing experience and speed in 3D field, which helps researchers and developers to label, debug, visualize various 3D data.
+
+GenMotion     |GenMotion|
+*****************************************
+
+.. |GenMotion| image:: https://img.shields.io/badge/license-genmotion-green
+   :target: https://github.com/yizhouzhao/GenMotion/blob/main/LICENCE
+   :alt: Licence
+
+.. image:: ./license/genmotion.png
+   :width: 100%
+   :alt: genmotion
+
+`GenMotion <https://genmotion.readthedocs.io/en/latest/index.html#>`_ is a Python library for making skeletal animations. It enables easy dataset loading and experiment sharing for synthesizing skeleton-Based human animation with the Python API. It also comes with a easy-to-use and industry-compatible API for Autodesk Maya, Maxon Cinema 4D, and Blender.
