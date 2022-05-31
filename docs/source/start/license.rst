@@ -34,3 +34,16 @@ Dataset
    :alt: front3d
 
 `3D-Front <https://www.nvidia.com/en-us/omniverse/>`_ is large-scale, and comprehensive repository of synthetic indoor scenes highlighted by professionally designed layouts. From layout semantics down to texture details of individual objects, tge dataset is freely available to the academic community and beyond. Currently, 3D-FRONT contains 18,797 rooms diversely furnished by 3D objects. In addition, the 7,302 furniture objects all come with high-quality textures. 
+
+SAPIEN Asset      |SAPIEN|
+*****************************************
+
+.. |SAPIEN| image:: https://img.shields.io/badge/license-sapien-green
+   :target: https://sapien.ucsd.edu/about#term
+   :alt: Licence
+
+.. image:: ./img/articulated_body1.png
+   :width: 100%
+   :alt: sapien
+
+`PartNet-Mobility dataset in SAPIEN <https://sapien.ucsd.edu/>`_ is a collection of about 2,000 articulated objects with motion annotations and rendernig material. The dataset powers research for generalizable computer vision and manipulation. The dataset is a continuation of ShapeNet and PartNet.
