@@ -5,13 +5,22 @@ We introduce how to provide a coding solution to the Omniverse file system. The 
 
 Get started by importing the ``omni`` package:
 
-.. code-block::
+.. code-block:: python
 
     import omni
+
+.. note::
+
+    If you would like to call with `corountine`, please ``import asyncio`` and run it with
+    
+    .. code-block:: python
+
+        import asyncio
+        asyncio.ensure_future(<your async function>)
 
 New Stage
 #########################
 
-.. code-block::
+.. code-block:: python
 
     await omni.usd.get_context().new_stage_async()
