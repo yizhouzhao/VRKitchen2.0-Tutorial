@@ -1,4 +1,4 @@
-Toolkit overview
+Overview
 ===============================================================
 
 To facilitate the study of **indoor scene building** methods and their potential
@@ -35,7 +35,7 @@ Demo 3: Set up liquid
 
 Research on studies of softbodies and liquid is very prolific and already achieved important success, although with very different technological appliciable level. The interaction with liquid and softbody in Embodied AI is by far the most productive topic. 
 
-In this tutorial: :ref:`Tutorial Liquid`, we show how to calculate and build liquid in `Omniverse`.
+In this tutorial: :ref:`Tutorial Liquid`, we show how to calculate and build liquid in ``Omniverse``.
 
 .. image:: ./img/cup_water1.*
    :alt: cup_water1
@@ -46,7 +46,7 @@ Demo 4: Set up Robot
 
 Embodied AI originally refers to AI for virtual robots, which is the field for solving AI problems for virtual robots that can move, see, speak, and interact in the virtual world and with other virtual robots/ Hopefully, the simulated robot solutions are then **transferred to real world robots**.
 
-In this tutorial (:ref:`Tutorial Robot`), we show how to import a `Franka Emika Panda` robot in `Omniverse`.
+In this tutorial (:ref:`Tutorial Robot`), we show how to import a ``Franka Emika Panda`` robot in ``Omniverse``.
 
 .. image:: ./img/franka1.*
    :alt: franka1

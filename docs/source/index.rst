@@ -17,11 +17,8 @@ The source code is available on `Github <https://https://github.com/yizhouzhao/G
 
 .. note::
 
-   This project is under active development. [06/01/2022]
-
-
-Contents
-------------------------------------------------------
+   This project is under active development. 
+   Update(06/01/2022): Initialize documentation.
 
 .. toctree::
    :maxdepth: 2
@@ -48,6 +45,7 @@ Contents
    :caption: Omniverse Manual
 
    manual/manual_overview
+   manual/file_system
 
 .. toctree::
    :maxdepth: 2
