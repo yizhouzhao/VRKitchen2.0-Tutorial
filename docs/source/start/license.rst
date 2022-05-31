@@ -3,8 +3,11 @@ License
 
 A wide range of software and datasets contributes to this toolkit. To encourage copyright protection, we present the licenses that may be necessary for our `VRKitchen2.0` to show our respect to all original works. Users might need some special conditions that should be clear for future users of our toolkit. 
 
-Omniverse      |Omniverse|
+Software
 ########################################
+
+Omniverse      |Omniverse|
+*****************************************
 
 .. |Omniverse| image:: https://img.shields.io/badge/license-individual_enterprise-green
    :target: https://www.nvidia.com/en-us/omniverse/download/
@@ -15,3 +18,19 @@ Omniverse      |Omniverse|
    :alt: omniverse
 
 `NVIDIA Omniverse <https://www.nvidia.com/en-us/omniverse/>`_ is an easily extensible platform for 3D design collaboration and scalable multi-GPU, real-time, true-to-reality simulation. Omniverse revolutionizes the way we create and develop as individuals and work together as teams, bringing more creative possibilities and efficiency to 3D creators, developers and enterprises.
+
+Dataset
+########################################
+
+3D-Front      |3D-Front|
+*****************************************
+
+.. |3D-Front| image:: https://img.shields.io/badge/license-3d_front-green
+   :target: https://gw.alicdn.com/bao/uploaded/TB1ZJUfK.z1gK0jSZLeXXb9kVXa.pdf?spm=a1z3i.a4.0.0.3f5beb1digOegr&file=TB1ZJUfK.z1gK0jSZLeXXb9kVXa.pdf
+   :alt: Licence
+
+.. image:: ./license/front3d.png
+   :width: 100%
+   :alt: front3d
+
+`3D-Front <https://www.nvidia.com/en-us/omniverse/>`_ is large-scale, and comprehensive repository of synthetic indoor scenes highlighted by professionally designed layouts. From layout semantics down to texture details of individual objects, tge dataset is freely available to the academic community and beyond. Currently, 3D-FRONT contains 18,797 rooms diversely furnished by 3D objects. In addition, the 7,302 furniture objects all come with high-quality textures. 
