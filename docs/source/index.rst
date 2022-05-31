@@ -21,4 +21,9 @@ The source code is available on `Github <https://https://github.com/yizhouzhao/G
 Get Started with Omniverse Create Extension
 ------------------------------------------------------
 
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Getting Started
 
+   start/overview

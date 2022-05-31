@@ -2,7 +2,7 @@
 
 # -- Project information
 
-project = 'VRKitchen2.0'
+project = 'VRKitchen2.0-Tutorial'
 copyright = '2022, UCLA'
 author = 'Yizhou Zhao, Wensi Ai'
 
@@ -51,7 +51,7 @@ html_theme_options = {
     'prev_next_buttons_location': 'bottom',
     'style_external_links': False,
     'vcs_pageview_mode': '',
-    'style_nav_header_background': '#c9c955',
+    'style_nav_header_background': '#fccf03',
     # Toc options
     'collapse_navigation': False,
     'sticky_navigation': True,
