@@ -11,6 +11,7 @@ as we ourselves have learned all the coding lessons from those three documentati
 
 .. toctree::
    :maxdepth: 2
+   :titlesonly:
    :caption: Contents
 
    ./file_system

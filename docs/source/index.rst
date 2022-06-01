@@ -46,7 +46,9 @@ The source code is available on `Github <https://https://github.com/yizhouzhao/G
 
    manual/manual_overview
    manual/file_system
-   manual/log_setting
+   manual/log_system
+   manual/set_system
+   
 
 .. toctree::
    :maxdepth: 2
