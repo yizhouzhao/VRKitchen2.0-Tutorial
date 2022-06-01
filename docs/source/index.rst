@@ -45,6 +45,7 @@ The source code is available on `Github <https://https://github.com/yizhouzhao/G
    :hidden:
    :caption: Omniverse Manual
 
+   manual/overview
    manual/*
    
 
