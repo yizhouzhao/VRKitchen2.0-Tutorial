@@ -46,7 +46,7 @@ The source code is available on `Github <https://https://github.com/yizhouzhao/G
    :caption: Omniverse Manual
 
    manual/overview
-   manual/*
+   manual/*_system
    
 
 .. toctree::
