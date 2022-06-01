@@ -4,7 +4,8 @@ Settings
 The original documentation can be found `here <https://docs.omniverse.nvidia.com/py/kit/docs/api/carb/carb.settings.html?highlight=carb%20settings#module-carb.settings>`_
 
 
-Get app information:
+Get app title
+#########################
 
 .. code-block:: python
 
@@ -12,7 +13,8 @@ Get app information:
     app_name = carb.settings.get_settings().get("/app/window/title")
     # Isaac Sim, Create, Code, e.t.c.
 
-Get app version:
+Get app version
+#########################
 
 .. code-block:: python
 

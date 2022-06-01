@@ -9,6 +9,14 @@ We strongly recommend users to take a look at the official API documentation for
 
 as we ourselves have learned all the coding lessons from those three documentations.
 
+Get started by importing the ``omni``, ``carb``, and ``pixar``` package:
+
+.. code-block:: python
+
+    import omni
+    import carb
+    import pxr
+
 .. toctree::
    :maxdepth: 2
    :titlesonly:

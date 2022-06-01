@@ -41,13 +41,11 @@ The source code is available on `Github <https://https://github.com/yizhouzhao/G
 
 .. toctree::
    :maxdepth: 2
+   :glob:
    :hidden:
    :caption: Omniverse Manual
 
-   manual/manual_overview
-   manual/file_system
-   manual/log_system
-   manual/set_system
+   manual/*
    
 
 .. toctree::
