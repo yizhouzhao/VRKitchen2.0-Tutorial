@@ -1,4 +1,4 @@
-Overview
+Extented Omniverse Kit User Manual
 ============================================
 
 We strongly recommend users to take a look at the official API documentation for 
@@ -16,9 +16,3 @@ Get started by importing the ``omni``, ``carb``, and ``pixar``` package:
     import omni
     import carb
     import pxr
-
-.. toctree::
-   :titlesonly:
-   :caption: Contents
-
-   ./file_system
