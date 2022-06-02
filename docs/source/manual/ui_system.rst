@@ -6,6 +6,7 @@ The UI system allows you to build up your own graphics control.
 Learn more about `Omniverse omni.ui <https://docs.omniverse.nvidia.com/py/kit/source/extensions/omni.ui/docs/index.html>`_
 
 .. note::
+    
     Get started by importing the ``omni.ui``:
 
     .. code-block:: python
@@ -41,6 +42,7 @@ Integer UI
 #########################
 
 .. code-block:: python
+
     ui.Label("Example id: ", width=20)
     self.example_id_ui = omni.ui.IntField(height=20, style={ "margin_height": 8 })
 
