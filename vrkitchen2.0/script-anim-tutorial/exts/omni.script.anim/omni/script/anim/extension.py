@@ -13,6 +13,12 @@ class MyExtension(omni.ext.IExt):
     # ext_id is current extension id. It can be used with extension manager to query additional information, like where
     # this extension is located on filesystem.
     def on_startup(self, ext_id):
+
+        # property
+        self._is_stopped = True
+        self._tensor_started = False
+        self._tensor_api = None
+
         print("[omni.script.anim] MyExtension startup")
 
         self._window = ui.Window("Script Animation Tutorial", width=300, height=300)
@@ -21,10 +27,17 @@ class MyExtension(omni.ext.IExt):
                 with ui.HStack(height = 30):
                     ui.Label("Some Label")
                     ui.Button("Click Me", clicked_fn= self.on_click)
+                    ui.Button("Test simple", clicked_fn= self.test_simple)
     
     def on_click(self):
         carb.log_warn("Script Animation Tutorial")
+
+        # setup subscriptions:
+        self._setup_callbacks()
+
         self._enable_tensor_api()
+
+        
     
     def on_shutdown(self):
         print("[omni.script.anim] MyExtension shutdown")
@@ -110,4 +123,28 @@ class MyExtension(omni.ext.IExt):
             2. when the simulation data is ready for the user to setup views using the tensor API.
         """
         sim = tensorApi.create_simulation_view("numpy")
-        sim.set_subspace_roots("/World/envs/*")
+        sim.set_subspace_roots("/World/*")
+
+        self.characters = sim.create_articulation_view("/World/biped_demo")
+
+        # self.hands = sim.create_rigid_body_view("/World/biped_demo/Body_Mesh")
+        # print("hands? ", self.hands.get_transforms())
+
+    
+    def on_physics_step(self, dt):
+        """
+        This method is called on each physics step callback, and the first callback is issued
+        after the on_tensor_start method is called if the tensor API is enabled.
+        """
+        pass
+        #self.count_down -= 1
+        # self.dof_pos = self.frankas.get_dof_positions()
+        
+        # # print("dof_pos", self.dof_pos)
+        # #if self.count_down < 0:
+        # self.position_control()
+
+    # --------------------------------------------
+
+    def test_simple(self):
+        stage = 0
