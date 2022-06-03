@@ -27,10 +27,12 @@ class MyExtension(omni.ext.IExt):
         self._window = ui.Window("Script Animation Tutorial", width=300, height=300)
         with self._window.frame:
             with ui.VStack():
-                with ui.HStack(height = 30):
-                    ui.Label("Some Label")
-                    ui.Button("Click Me", clicked_fn= self.on_click)
-                    ui.Button("Test simple", clicked_fn= self.test_simple)
+                ui.Label("Some Label")
+                ui.Button("Click Me", clicked_fn= self.on_click)
+                ui.Button("Test simple", clicked_fn= self._on_button_add_xform_keys)
+                # ui.Button("Test timeline", clicked_fn= self.set_time_in_frame)
+                
+                
     
     def on_click(self):
         carb.log_warn("Script Animation Tutorial")
@@ -151,11 +153,82 @@ class MyExtension(omni.ext.IExt):
 
     def test_simple(self):
         stage = omni.usd.get_context().get_stage()
+
+        prim = stage.DefinePrim("/World/cube", "Cube")
+
         prim = stage.GetPrimAtPath("/World/Cube")
 
         has_anim = prim.HasAPI(AnimationSchema.AnimationDataAPI)
         print("Object has animation? ", has_anim)
 
-        (result, err) = omni.kit.commands.execute("SetAnimCurveKey", paths=["/World/Cube.size"], value=120.0)
-        _anim_data_prim_path =  omni.usd.get_stage_next_free_path(stage, str(prim.GetPath()) + "/animationData", False)
-        AnimationSchemaTools.AddAnimation(prim, _anim_data_prim_path)
+        # (result, err) = omni.kit.commands.execute("SetAnimCurveKey", paths=["/World/Cube.size"], value=120.0)
+        # _anim_data_prim_path =  omni.usd.get_stage_next_free_path(stage, str(prim.GetPath()) + "/animationData", False)
+        # AnimationSchemaTools.AddAnimation(prim, _anim_data_prim_path)
+
+
+        prim_paths = [prim.GetPath()]
+
+
+    
+    def set_time_in_frame(self, nun_frame: int = 10):
+        
+        from omni.timeline import get_timeline_interface
+
+        timeline_iface = get_timeline_interface()
+        timeline_iface.play()
+        timeline_iface.set_auto_update(False)
+        for i in range(nun_frame):
+            timeline_iface.forward_one_frame()
+        
+        timeline_iface.pause()
+
+    def _on_button_add_xform_keys(self):
+        self._usd_context = omni.usd.get_context()
+
+        stage = self._usd_context.get_stage()
+        if not stage:
+            message = "Try to add animation keys while the scene stage is invalid."
+            carb.log_info(message)
+            return
+        selection = self._usd_context.get_selection()
+        prim_paths = selection.get_selected_prim_paths()
+        self._add_xform_keys(prim_paths, stage)
+
+    
+    def _add_xform_keys(self, prim_paths, stage):
+        
+        from pxr import UsdGeom
+
+        if prim_paths == None or len(prim_paths) == 0:
+            message = "Please select xformable prims(objects) before adding animation keys."
+            carb.log_info(message)
+            return
+        keyable_xform_attr_names = [
+            "xformOp:translate",
+            "xformOp:rotateX",
+            "xformOp:rotateY",
+            "xformOp:rotateZ",
+            "xformOp:rotateXYZ",
+            "xformOp:rotateXZY",
+            "xformOp:rotateYXZ",
+            "xformOp:rotateYZX",
+            "xformOp:rotateZXY",
+            "xformOp:rotateZYX",
+            "xformOp:scale",
+            "visibility"
+        ]
+        curve_names = []
+        for path in prim_paths:
+            if path is not None:
+                prim = stage.GetPrimAtPath(path)
+                if prim and prim.IsA(UsdGeom.Xformable):
+                    for attr_name in keyable_xform_attr_names:
+                        attr = prim.GetAttribute(attr_name)
+                        if attr:
+                            curve_names.append(attr.GetPath().pathString)
+        if len(curve_names) > 0:
+            omni.kit.commands.execute("SetAnimCurveKey", paths=curve_names)
+        else:
+            message = "There is no suitable xformable attribute to author keys."
+            carb.log_info(message)
+            return

@@ -56,3 +56,10 @@ The source code is available on `Github <https://https://github.com/yizhouzhao/G
 
    api/api_overview
 
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Third Party
+
+   party3rd/*
+
