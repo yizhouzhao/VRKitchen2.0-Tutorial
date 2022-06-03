@@ -26,7 +26,7 @@ Update timeline
     for i in range(nun_frame):
         timeline_iface.forward_one_frame()
 
-Update timeline
+Set up timeline
 #########################
 
 .. code-block:: python
