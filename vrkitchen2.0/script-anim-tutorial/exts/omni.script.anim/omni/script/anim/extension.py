@@ -6,6 +6,9 @@ import carb
 import importlib
 import types
 
+
+from pxr import AnimationSchema, AnimationSchemaTools
+
 # Any class derived from `omni.ext.IExt` in top level module (defined in `python.modules` of `extension.toml`) will be
 # instantiated when extension gets enabled and `on_startup(ext_id)` will be called. Later when extension gets disabled
 # on_shutdown() is called.
@@ -147,4 +150,12 @@ class MyExtension(omni.ext.IExt):
     # --------------------------------------------
 
     def test_simple(self):
-        stage = 0
+        stage = omni.usd.get_context().get_stage()
+        prim = stage.GetPrimAtPath("/World/Cube")
+
+        has_anim = prim.HasAPI(AnimationSchema.AnimationDataAPI)
+        print("Object has animation? ", has_anim)
+
+        (result, err) = omni.kit.commands.execute("SetAnimCurveKey", paths=["/World/Cube.size"], value=120.0)
+        _anim_data_prim_path =  omni.usd.get_stage_next_free_path(stage, str(prim.GetPath()) + "/animationData", False)
+        AnimationSchemaTools.AddAnimation(prim, _anim_data_prim_path)

@@ -58,6 +58,7 @@ Get prim path and name
 
 .. code-block:: python
 
+    prim = stage.GetPrimAtPath("/World/Cube")
     prim_path = prim.GetPath()
     prim_name = prim_path.pathString
 
