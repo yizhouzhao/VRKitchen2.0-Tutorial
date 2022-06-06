@@ -61,5 +61,5 @@ The source code is available on `Github <https://https://github.com/yizhouzhao/G
    :hidden:
    :caption: Third Party
 
-   party3rd/*
+   party3rd/maya
 
