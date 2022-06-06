@@ -52,14 +52,14 @@ The source code is available on `Github <https://https://github.com/yizhouzhao/G
 .. toctree::
    :maxdepth: 2
    :hidden:
-   :caption: API
+   :caption: Animation
 
-   api/api_overview
+   animation/anim_overview
 
 .. toctree::
    :maxdepth: 2
    :hidden:
    :caption: Third Party
 
-   party3rd/maya
+   party3rd/*
 
