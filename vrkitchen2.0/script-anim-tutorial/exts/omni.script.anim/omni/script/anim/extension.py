@@ -30,6 +30,7 @@ class MyExtension(omni.ext.IExt):
                 ui.Label("Some Label")
                 ui.Button("Click Me", clicked_fn= self.on_click)
                 ui.Button("Test simple", clicked_fn= self._on_button_add_xform_keys)
+                ui.Button("Test get position in anim", clicked_fn= self.get_transform_in_anim)
                 # ui.Button("Test timeline", clicked_fn= self.set_time_in_frame)
                 
                 
@@ -41,6 +42,9 @@ class MyExtension(omni.ext.IExt):
         self._setup_callbacks()
 
         self._enable_tensor_api()
+
+
+        
 
         
     
@@ -130,10 +134,12 @@ class MyExtension(omni.ext.IExt):
         sim = tensorApi.create_simulation_view("numpy")
         sim.set_subspace_roots("/World/*")
 
-        self.characters = sim.create_articulation_view("/World/biped_demo")
+        self.characters = sim.create_articulation_view("/World/envs/*/Cube")
+
+        self.cubes = sim.create_rigid_body_view("/World/envs/*/Cube")
 
         # self.hands = sim.create_rigid_body_view("/World/biped_demo/Body_Mesh")
-        # print("hands? ", self.hands.get_transforms())
+        print("cubes? ", self.cubes.get_transforms())
 
     
     def on_physics_step(self, dt):
@@ -232,3 +238,24 @@ class MyExtension(omni.ext.IExt):
             message = "There is no suitable xformable attribute to author keys."
             carb.log_info(message)
             return
+    
+    def get_transform_in_anim(self):
+        # self._usd_context = omni.usd.get_context()
+        # stage = self._usd_context.get_stage()
+
+        # prim_list = stage.TraverseAll()
+
+        # for prim in prim_list:
+        #     if "f_avg_L_Foot" in prim.GetPath().pathString:
+        #         translate = prim.GetAttribute("xformOp:translate").Get()
+        #         print("Got it prim: ", translate)
+
+        import omni.anim.graph.core as ag
+        c = ag.get_character("/World/a1")
+
+        t = carb.Float3(0, 0, 0)
+        q = carb.Float4(0, 0, 0, 1)
+        # c.get_world_transform(t, q)
+        c.get_joint_transform("f_avg_L_Foot", t, q)
+
+        print("t, q", t, q)
