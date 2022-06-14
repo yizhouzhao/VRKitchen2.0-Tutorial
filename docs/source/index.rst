@@ -55,6 +55,7 @@ The source code is available on `Github <https://https://github.com/yizhouzhao/G
    :caption: Animation
 
    animation/anim_overview
+   animation/*
 
 .. toctree::
    :maxdepth: 2
