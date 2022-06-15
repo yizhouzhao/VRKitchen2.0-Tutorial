@@ -21,7 +21,7 @@ In this part, we are going to show how to bring characters and animation clips f
 
 Visit `Adobe Mixamo <https://www.mixamo.com/#/>`_, then save the character (e.g. peasant_girl.fbx) and the animation clip (e.g. Silly Dancing.fbx)
 
-.. figure:: ./img/mixamo.png
+.. figure:: ./img/amixamo.png
    :alt: log image
    :width: 50%
 
@@ -31,8 +31,25 @@ Visit `Adobe Mixamo <https://www.mixamo.com/#/>`_, then save the character (e.g.
 
 
 2. Import FBX into maya
+#######################################################################
+
+.. figure:: ./img/maya_import_mixamo.png
+   :alt: import image
+   :width: 50%
+
+We can also try import with Python code:
 
 .. code-block:: python
 
     import maya.cmds as cmds
-    cmds.file("E:/researches/VRKitchen2.0-Tutorial/asset/mixamo/peasant_girl.fbx", i=True, type='Fbx')
+
+    fbx_path = "E:/researches/VRKitchen2.0-Tutorial/asset/mixamo/peasant_girl.fbx"
+    cmds.file(, i=True, type='Fbx')
+
+3. Group everything and export
+#######################################################################
+
+
+.. code-block:: python
+
+    cmds.group( 'Peasant_girl', 'Hips', n='Character')
