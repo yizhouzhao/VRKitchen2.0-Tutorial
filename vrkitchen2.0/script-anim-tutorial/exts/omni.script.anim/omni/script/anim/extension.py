@@ -6,6 +6,8 @@ import carb
 import importlib
 import types
 
+import asyncio
+
 
 from pxr import AnimationSchema, AnimationSchemaTools
 
@@ -31,7 +33,7 @@ class MyExtension(omni.ext.IExt):
                 ui.Button("Click Me", clicked_fn= self.on_click)
                 ui.Button("Test simple", clicked_fn= self._on_button_add_xform_keys)
                 ui.Button("Test get position in anim", clicked_fn= self.get_transform_in_anim)
-                # ui.Button("Test timeline", clicked_fn= self.set_time_in_frame)
+                ui.Button("Test Animation", clicked_fn= self.test_anim_graph)
                 
                 
     
@@ -240,8 +242,8 @@ class MyExtension(omni.ext.IExt):
             return
     
     def get_transform_in_anim(self):
-        # self._usd_context = omni.usd.get_context()
-        # stage = self._usd_context.get_stage()
+        self._usd_context = omni.usd.get_context()
+        stage = self._usd_context.get_stage()
 
         # prim_list = stage.TraverseAll()
 
@@ -250,8 +252,18 @@ class MyExtension(omni.ext.IExt):
         #         translate = prim.GetAttribute("xformOp:translate").Get()
         #         print("Got it prim: ", translate)
 
+        # timeline = omni.timeline.get_timeline_interface()
+        # timeline.play()
+        # time = timeline.get_current_time()
+        # omni.kit.app.get_app().update()
+        # omni.kit.app.get_app().update()
+
+        character_prim = stage.GetPrimAtPath("/World/Character")
+        print("character_prim ?!", character_prim == None)
+
         import omni.anim.graph.core as ag
-        c = ag.get_character("/World/a1")
+
+        c = ag.get_character("/World/Character")
 
         t = carb.Float3(0, 0, 0)
         q = carb.Float4(0, 0, 0, 1)
@@ -259,3 +271,37 @@ class MyExtension(omni.ext.IExt):
         c.get_joint_transform("f_avg_L_Foot", t, q)
 
         print("t, q", t, q)
+
+    def test_anim_graph(self):
+        
+        from pxr import Sdf, Usd, UsdSkel
+        from pxr import AnimGraphSchema, AnimGraphSchemaTools
+        import omni.anim.graph.core as ag
+        import carb
+
+        self._usd_context = omni.usd.get_context()
+        stage = self._usd_context.get_stage()
+        # anim_graph = AnimGraphSchemaTools.createAnimationGraph(stage, Sdf.Path("/World/AnimationGraph"))
+        # omni.kit.commands.execute("CreateAnimationGraphCommand", \
+        #     path=Sdf.Path("/World/AnimationGraph"), skeleton_path=Sdf.Path("/World/character/f_avg_root"))
+
+        # omni.kit.commands.execute("ApplyAnimationGraphAPICommand", \
+        #     paths=[Sdf.Path("/World/character")], animation_graph_path=Sdf.Path("/World/AnimationGraph"))
+
+        # async def anim_async():
+        skeleton_prim = stage.GetPrimAtPath("/World/character/f_avg_root")
+        skeleton_bindingAPI = UsdSkel.BindingAPI(skeleton_prim)
+        skeleton_bindingAPI.GetAnimationSourceRel().SetTargets([])
+        # gt.ClearTargets(False)
+        # gt.ClearTargets(True)
+
+        
+
+        # await omni.kit.app.get_app().next_update_async()
+        # await omni.kit.app.get_app().next_update_async()
+
+        print("anim set")
+
+        # asyncio.ensure_future(anim_async())
+        # carb.log_warn("binding?
+        # omni.kit.commands.execute("ApplySkelBindingAPICommand", paths=[Sdf.Path("/World/Cone")])
