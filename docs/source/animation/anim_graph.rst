@@ -73,6 +73,18 @@ Remove animation graph api
     omni.kit.commands.execute("RemoveAnimationGraphAPICommand", paths=selected_paths)
 
 
+Create Animation Clip
+############################
+
+.. code-block:: python
+
+    omni.kit.commands.execute(
+                'CreatePrimCommand',
+                prim_type="AnimationClip",
+                prim_path="/World/AnimationGraph/Animation",
+                select_new_prim=True,
+            )
+
 
 Get character
 ############################

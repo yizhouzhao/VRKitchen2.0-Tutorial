@@ -263,14 +263,27 @@ class MyExtension(omni.ext.IExt):
 
         import omni.anim.graph.core as ag
 
-        c = ag.get_character("/World/Character")
+        '''
+        # c = ag.get_character("/World/Character")
 
-        t = carb.Float3(0, 0, 0)
-        q = carb.Float4(0, 0, 0, 1)
-        # c.get_world_transform(t, q)
-        c.get_joint_transform("f_avg_L_Foot", t, q)
+        # t = carb.Float3(0, 0, 0)
+        # q = carb.Float4(0, 0, 0, 1)
+        # # c.get_world_transform(t, q)
+        # c.get_joint_transform("f_avg_L_Foot", t, q)
 
-        print("t, q", t, q)
+        # print("t, q", t, q)
+        '''
+        
+        from omni.anim.graph.ui.scripts.extension import PublicExtension
+
+        graph_manager = PublicExtension.GRAPH_MANAGER
+        print("graph manager dict", graph_manager._node_graph_dict)
+
+        from pxr import Sdf
+        node_graph = graph_manager.get_node_graph(Sdf.Path("/World/AnimationGraph"))
+
+        print("node_graph: ", node_graph._path_to_node)
+
 
     def test_anim_graph(self):
         
@@ -281,12 +294,14 @@ class MyExtension(omni.ext.IExt):
 
         self._usd_context = omni.usd.get_context()
         stage = self._usd_context.get_stage()
-        # anim_graph = AnimGraphSchemaTools.createAnimationGraph(stage, Sdf.Path("/World/AnimationGraph"))
-        # omni.kit.commands.execute("CreateAnimationGraphCommand", \
-        #     path=Sdf.Path("/World/AnimationGraph"), skeleton_path=Sdf.Path("/World/character/f_avg_root"))
 
-        # omni.kit.commands.execute("ApplyAnimationGraphAPICommand", \
-        #     paths=[Sdf.Path("/World/character")], animation_graph_path=Sdf.Path("/World/AnimationGraph"))
+        # '''
+        ### anim_graph = AnimGraphSchemaTools.createAnimationGraph(stage, Sdf.Path("/World/AnimationGraph"))
+        omni.kit.commands.execute("CreateAnimationGraphCommand", \
+            path=Sdf.Path("/World/AnimationGraph"), skeleton_path=Sdf.Path("/World/character/f_avg_root"))
+
+        omni.kit.commands.execute("ApplyAnimationGraphAPICommand", \
+            paths=[Sdf.Path("/World/character")], animation_graph_path=Sdf.Path("/World/AnimationGraph"))
 
         # async def anim_async():
         skeleton_prim = stage.GetPrimAtPath("/World/character/f_avg_root")
@@ -294,14 +309,26 @@ class MyExtension(omni.ext.IExt):
         skeleton_bindingAPI.GetAnimationSourceRel().SetTargets([])
         # gt.ClearTargets(False)
         # gt.ClearTargets(True)
-
-        
-
-        # await omni.kit.app.get_app().next_update_async()
-        # await omni.kit.app.get_app().next_update_async()
+        # '''
 
         print("anim set")
 
-        # asyncio.ensure_future(anim_async())
-        # carb.log_warn("binding?
-        # omni.kit.commands.execute("ApplySkelBindingAPICommand", paths=[Sdf.Path("/World/Cone")])
+        # create 
+        # omni.kit.commands.execute(
+        #             'CreatePrimCommand',
+        #             prim_type="AnimationClip",
+        #             prim_path="/World/AnimationGraph/Animation",
+        #             select_new_prim=True,
+        #         )
+
+        # animclip_prim = stage.GetPrimAtPath("/World/AnimationGraph/Animation")
+        # # animclip_bindingAPI = UsdSkel.BindingAPI(animclip_prim)
+
+        # anim_clip = AnimGraphSchema.AnimationClip(animclip_prim)
+        # source_rel = anim_clip.GetInputsAnimationSourceRel()
+
+        # omni.kit.commands.execute(
+        #     'omni.anim.graph.ui.scripts.command.SetRelationshipTargetsCommand',
+        #     relationship=source_rel,
+        #     targets=[Sdf.Path("/World/character/f_avg_root/Animation")]
+        # )
