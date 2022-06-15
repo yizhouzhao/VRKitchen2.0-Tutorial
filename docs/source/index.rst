@@ -31,7 +31,7 @@ The source code is available on `Github <https://https://github.com/yizhouzhao/G
    :maxdepth: 2
    :caption: Tutorial
 
-   tutorial/*_mixamo
+   tutorial/anim_mixamo
    tutorial/extension
    tutorial/indoor   
    tutorial/articulated_object  
