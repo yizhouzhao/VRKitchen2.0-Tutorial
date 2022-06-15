@@ -60,7 +60,7 @@ The source code is available on `Github <https://https://github.com/yizhouzhao/G
 .. toctree::
    :maxdepth: 2
    :hidden:
-   :caption: Third Party
+   :caption: Third Party API
 
    party3rd/maya
 
