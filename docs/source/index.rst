@@ -31,6 +31,7 @@ The source code is available on `Github <https://https://github.com/yizhouzhao/G
    :maxdepth: 2
    :caption: Tutorial
 
+   tutorial/anim_*
    tutorial/extension
    tutorial/indoor   
    tutorial/articulated_object  
