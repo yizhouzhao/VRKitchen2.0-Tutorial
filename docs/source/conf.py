@@ -77,6 +77,6 @@ StandaloneHTMLBuilder.supported_image_types = [
 
 import os
 import sys
-sys.path.insert(0, os.path.abspath(os.path.join('..', '..', 'kitc')))
+sys.path.insert(0, os.path.abspath(os.path.join('..', '..', 'api')))
 
 autodoc_mock_imports = ["bpy", "numpy", "torch", "matplotlib", "IPython", "pickle", "maya"]
