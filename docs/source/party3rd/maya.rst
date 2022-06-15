@@ -11,5 +11,5 @@ API Documentaion links
 * `Maya 2023 MEL <https://help.autodesk.com/view/MAYAUL/2023/ENU/index.html?contextId=COMMANDS-INDEX>`_
 
 
-.. automodule:: api.maya.utils
+.. automodule:: maya.utils
     :members:
