@@ -92,7 +92,7 @@ Finally, load character and select your animation clip in Omnvierse.
 Method two: use Maya USD converter
 ------------------------------------------------------------------------
 
-0. Requirements
+Requirements
 #######################################
 
 .. warning::
@@ -105,7 +105,7 @@ Method two: use Maya USD converter
 
 
 
-1. Download character & Animation from MIXAMO
+Download character & Animation from MIXAMO
 #######################################################################
 
 Visit `Adobe Mixamo <https://www.mixamo.com/#/>`_, then save the character (e.g. peasant_girl.fbx) and the animation clip (e.g. Silly Dancing.fbx)
@@ -119,7 +119,7 @@ Visit `Adobe Mixamo <https://www.mixamo.com/#/>`_, then save the character (e.g.
     The ``animation clip`` can be saved with skeletal animation only (without skin).
 
 
-2. Import FBX into maya
+Import FBX into maya
 #######################################################################
 
 .. figure:: ./img/maya_import_mixamo.png
@@ -135,7 +135,7 @@ We can also try import with Python code:
     fbx_path = "E:/researches/VRKitchen2.0-Tutorial/asset/mixamo/peasant_girl.fbx"
     cmds.file(fbx_path, i=True, type='Fbx')
 
-3. Group character and export
+Group character and export
 #######################################################################
 
 .. figure:: ./img/maya_group.png
@@ -159,7 +159,7 @@ We can also try import with Python code:
     cmds.file(usd_path, force = True, options = options, type="USD Export", exportSelected=True, preserveReferences=True)
 
 
-5. Import and export animation
+Import and export animation
 #######################################################################
 
 Now we do the same step for the animation clip.
@@ -188,7 +188,7 @@ Now we do the same step for the animation clip.
     cmds.file(usd_path, force = True, options = options, type="USD Export", exportSelected=True, preserveReferences=True)
 
 
-6. Load character and animation into Omnvierse
+Load character and animation into Omnvierse
 #######################################################################
 
 Finally, load character and select your animation clip in Omnvierse. 
@@ -197,7 +197,7 @@ Finally, load character and select your animation clip in Omnvierse.
    :alt: import a c image
    :width: 100%
 
-7. Now you can see the mixamo animation:
+Now you can see the mixamo animation:
 
 .. figure:: ./img/remy_dance.*
    :alt: amim image
