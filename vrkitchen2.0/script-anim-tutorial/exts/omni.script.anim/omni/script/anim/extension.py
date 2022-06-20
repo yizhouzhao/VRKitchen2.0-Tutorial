@@ -295,18 +295,21 @@ class MyExtension(omni.ext.IExt):
         self._usd_context = omni.usd.get_context()
         stage = self._usd_context.get_stage()
 
+        anim_graph_path = "/World/AnimationGraph"
+        skeleton_path = "/World/peasant_girl/Hips0/Skeleton"
+        character_path = "/World/peasant_girl"
         # '''
         ### anim_graph = AnimGraphSchemaTools.createAnimationGraph(stage, Sdf.Path("/World/AnimationGraph"))
         omni.kit.commands.execute("CreateAnimationGraphCommand", \
-            path=Sdf.Path("/World/AnimationGraph"), skeleton_path=Sdf.Path("/World/character/f_avg_root"))
+            path=Sdf.Path(anim_graph_path), skeleton_path=Sdf.Path(skeleton_path))
 
         omni.kit.commands.execute("ApplyAnimationGraphAPICommand", \
-            paths=[Sdf.Path("/World/character")], animation_graph_path=Sdf.Path("/World/AnimationGraph"))
+            paths=[Sdf.Path(character_path)], animation_graph_path=Sdf.Path(anim_graph_path))
 
-        # async def anim_async():
-        skeleton_prim = stage.GetPrimAtPath("/World/character/f_avg_root")
-        skeleton_bindingAPI = UsdSkel.BindingAPI(skeleton_prim)
-        skeleton_bindingAPI.GetAnimationSourceRel().SetTargets([])
+        
+        # skeleton_prim = stage.GetPrimAtPath("/World/character/f_avg_root")
+ 9       # skeleton_bindingAPI = UsdSkel.BindingAPI(skeleton_prim)
+        # skeleton_bindingAPI.GetAnimationSourceRel().SetTargets([])
         # gt.ClearTargets(False)
         # gt.ClearTargets(True)
         # '''

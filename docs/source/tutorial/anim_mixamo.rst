@@ -3,6 +3,13 @@ Animation Tutorial 1: Bring Mixamo Animation to Omniverse
 
 In this part, we are going to show how to bring characters and animation clips from `Adobe Mixamo <https://www.mixamo.com/#/>`_ into ``Omniverse Create``
 
+Method one: use omniverse directly
+------------------------------------------------------------------------
+
+
+Method two: use omniverse directly
+------------------------------------------------------------------------
+
 0. Requirements
 #######################################
 
