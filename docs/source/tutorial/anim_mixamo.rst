@@ -1,4 +1,4 @@
-Animation Tutorial 1: Bring Mixamo Animation to Omniverse
+1. Bring Mixamo Animation to Omniverse
 ====================================================================
 
 In this part, we are going to show how to bring characters and animation clips from `Adobe Mixamo <https://www.mixamo.com/#/>`_ into ``Omniverse Create``
@@ -6,8 +6,80 @@ In this part, we are going to show how to bring characters and animation clips f
 Method one: use omniverse directly
 ------------------------------------------------------------------------
 
+0. Requirements
+#######################################
 
-Method two: use omniverse directly
+.. warning::
+
+    Please refer to the licenses (:ref:`Licenses`) if necessary.
+
+* `Adobe Mixamo <https://www.mixamo.com/#/>`_
+* `Nvidia Omniverse <https://www.nvidia.com/en-us/omniverse/>`_
+
+
+1. Download character & Animation from MIXAMO
+#######################################################################
+
+Visit `Adobe Mixamo <https://www.mixamo.com/#/>`_, then save the character (e.g. peasant_girl.fbx) and the animation clip (e.g. Silly Dancing.fbx)
+
+.. figure:: ./img/amixamo.png
+   :alt: log image 1
+   :width: 50%
+
+.. note::
+
+    The ``animation clip`` can be saved with skeletal animation only (without skin).
+
+2. Import FBX into Omniverse
+####################################################################### 
+
+(Optional) to convert ``FBX`` into ``USD``, please call the python code:
+
+.. code-block:: python
+
+
+   from pathlib import Path
+
+   # character
+   test_data_path = "E:/researches/VRKitchen2.0-Tutorial/asset/mixamo/peasant_girl.fbx"
+
+   # for animation, the same story applies
+   # test_data_path = "E:/researches/VRKitchen2.0-Tutorial/asset/mixamo/Silly Dancing.fbx"
+          
+
+   converter_manager = omni.kit.asset_converter.get_instance()
+   context = omni.kit.asset_converter.AssetConverterContext()
+   context.keep_all_materials = True
+   context.merge_all_meshes = True
+
+   # character
+   output_path = "E:/researches/VRKitchen2.0-Tutorial/asset/mixamo/peasant_girl_converted.usd"
+   # output_path = "E:/researches/VRKitchen2.0-Tutorial/asset/mixamo/silly_dancing_converted.usd"
+   
+   task = converter_manager.create_converter_task(test_data_path, output_path, None, context)
+
+   success = await task.wait_until_finished()
+   assert success, "convert not successful"
+   assert Path(output_path).is_file()
+
+3. Load character and animation into Omnvierse
+#######################################################################
+
+Finally, load character and select your animation clip in Omnvierse. 
+
+.. figure:: ./img/create_mixamo.png
+   :alt: import a c1 image
+   :width: 100%
+
+4. Now you can see the mixamo animation:
+
+.. figure:: ./img/remy_dance
+   :alt: amim1 image
+   :width: 100%
+
+
+
+Method two: use Maya USD converter
 ------------------------------------------------------------------------
 
 0. Requirements
@@ -115,4 +187,8 @@ Finally, load character and select your animation clip in Omnvierse.
    :alt: import a c image
    :width: 100%
 
+7. Now you can see the mixamo animation:
 
+.. figure:: ./img/remy_dance
+   :alt: amim image
+   :width: 100%

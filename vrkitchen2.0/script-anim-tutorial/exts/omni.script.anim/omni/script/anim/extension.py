@@ -34,6 +34,7 @@ class MyExtension(omni.ext.IExt):
                 ui.Button("Test simple", clicked_fn= self._on_button_add_xform_keys)
                 ui.Button("Test get position in anim", clicked_fn= self.get_transform_in_anim)
                 ui.Button("Test Animation", clicked_fn= self.test_anim_graph)
+                ui.Button("Convert file", clicked_fn= self.convert_file)
                 
                 
     
@@ -308,7 +309,7 @@ class MyExtension(omni.ext.IExt):
 
         
         # skeleton_prim = stage.GetPrimAtPath("/World/character/f_avg_root")
- 9       # skeleton_bindingAPI = UsdSkel.BindingAPI(skeleton_prim)
+        # skeleton_bindingAPI = UsdSkel.BindingAPI(skeleton_prim)
         # skeleton_bindingAPI.GetAnimationSourceRel().SetTargets([])
         # gt.ClearTargets(False)
         # gt.ClearTargets(True)
@@ -335,3 +336,24 @@ class MyExtension(omni.ext.IExt):
         #     relationship=source_rel,
         #     targets=[Sdf.Path("/World/character/f_avg_root/Animation")]
         # )
+    
+    def convert_file(self):
+        print("convert file test")
+
+        async def convert_file_async():
+            from pathlib import Path
+
+            test_data_path = "E:/researches/VRKitchen2.0-Tutorial/asset/mixamo/Silly Dancing.fbx"
+            converter_manager = omni.kit.asset_converter.get_instance()
+            context = omni.kit.asset_converter.AssetConverterContext()
+            context.keep_all_materials = True
+            context.merge_all_meshes = True
+            output_path = "E:/researches/VRKitchen2.0-Tutorial/asset/mixamo/silly_dancing_converted.usd"
+            task = converter_manager.create_converter_task(test_data_path, output_path, None, context)
+      
+            success = await task.wait_until_finished()
+            assert success, "convert not successful"
+            assert Path(output_path).is_file()
+
+        
+        asyncio.ensure_future(convert_file_async())
