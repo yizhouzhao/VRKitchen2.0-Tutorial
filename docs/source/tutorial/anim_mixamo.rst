@@ -71,9 +71,19 @@ Finally, load character and select your animation clip in Omnvierse.
    :alt: import a c1 image
    :width: 100%
 
+.. note:: 
+
+   We can open USD file from script
+
+   .. code:: python
+      
+      omni.usd.get_context().open_stage_async(output_path)
+
+
+
 4. Now you can see the mixamo animation:
 
-.. figure:: ./img/remy_dance
+.. figure:: ./img/remy_dance.*
    :alt: amim1 image
    :width: 100%
 
@@ -189,6 +199,6 @@ Finally, load character and select your animation clip in Omnvierse.
 
 7. Now you can see the mixamo animation:
 
-.. figure:: ./img/remy_dance
+.. figure:: ./img/remy_dance.*
    :alt: amim image
    :width: 100%
