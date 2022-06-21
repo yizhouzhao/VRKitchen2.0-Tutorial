@@ -45,7 +45,7 @@ The source code is available on `Github <https://https://github.com/yizhouzhao/G
    :maxdepth: 2
    :glob:
    :hidden:
-   :caption: Omniverse Manual
+   :caption: Omniverse API
 
    manual/overview
    manual/*_system
@@ -54,10 +54,12 @@ The source code is available on `Github <https://https://github.com/yizhouzhao/G
 .. toctree::
    :maxdepth: 2
    :hidden:
-   :caption: Animation
+   :caption: Animation API
 
    animation/anim_overview
    animation/anim_graph
+   animation/anim_edit
+   
 
 .. toctree::
    :maxdepth: 2

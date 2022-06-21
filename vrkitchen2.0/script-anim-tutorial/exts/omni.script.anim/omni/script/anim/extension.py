@@ -35,6 +35,7 @@ class MyExtension(omni.ext.IExt):
                 ui.Button("Test get position in anim", clicked_fn= self.get_transform_in_anim)
                 ui.Button("Test Animation", clicked_fn= self.test_anim_graph)
                 ui.Button("Convert file", clicked_fn= self.convert_file)
+                ui.Button("Test edit animation curve", clicked_fn= self.test_edit_curve)
                 
                 
     
@@ -397,3 +398,113 @@ class MyExtension(omni.ext.IExt):
 
         
         asyncio.ensure_future(convert_file_async())
+
+    def test_edit_curve(self):
+        print("edit curve test")
+
+        from pxr import AnimGraphSchema, AnimGraphSchemaTools, UsdSkel
+        from pxr import Gf, Sdf, Usd
+        
+        stage = omni.usd.get_context().get_stage()
+        prim = stage.GetPrimAtPath("/World/AnimationGraph/Animation")
+
+        print("prim type", prim.GetTypeName())
+
+        # relation = prim.GetRelationship("animationData:binding")
+        #print("relation", relation)
+
+
+        anim_clip = AnimGraphSchema.AnimationClip(prim)
+
+        # has_anim = AnimationSchemaTools.HasAnimation(prim)
+        # print("has_anim", has_anim)
+        # return 
+        src_rel = anim_clip.GetInputsAnimationSourceRel()
+        src_targets = src_rel.GetTargets()
+        if src_targets:
+            src_skel_prim = stage.GetPrimAtPath(src_targets[0])
+            print("src_skel_prim", src_skel_prim.GetPath())
+
+            # has_anim = AnimationSchemaTools.HasAnimation(src_skel_prim)
+            # print("has_anim", has_anim)
+            # return 
+
+
+            src_skel_anim = UsdSkel.Animation(src_skel_prim)
+
+            print(src_skel_anim.GetSchemaAttributeNames())
+
+            rot_attr = src_skel_anim.GetRotationsAttr()
+            print("GetJointsAttr ()", src_skel_anim.GetJointsAttr().Get())
+            print("CetRotationsAttr ()", rot_attr.HasValue())
+            # print("GetTranslationsAttr ()", src_skel_anim.GetTranslationsAttr().Get())
+            
+            n_time_samples = rot_attr.GetNumTimeSamples()
+            print("n_time_samples", n_time_samples) 
+
+            timeline = omni.timeline.get_timeline_interface()
+            current_frame_code = timeline.get_current_time() * stage.GetTimeCodesPerSecond()
+            
+            quats = src_skel_anim.GetRotationsAttr().Get(current_frame_code)
+            print(":rot_attr", current_frame_code, len(quats), quats)
+
+            # current_frame_code = 1.0
+            # quats = src_skel_anim.GetRotationsAttr().Get(current_frame_code)
+            # print(":rot_attr", current_frame_code, len(quats), quats)
+
+            # current_frame_code = -1.0
+            # quats = src_skel_anim.GetRotationsAttr().Get(current_frame_code)
+            # print(":rot_attr", current_frame_code, len(quats), quats)
+
+            # trans = src_skel_anim.GetTranslationsAttr()
+            # success = trans.Clear()
+            # success = success and src_skel_anim.GetRotationsAttr().Clear()
+            # print("clear success", success)
+
+            animation = src_skel_anim
+
+            timecode = Usd.TimeCode(0.0 * stage.GetTimeCodesPerSecond())
+            trans = animation.GetTranslationsAttr().Get(timecode)
+            rots = animation.GetRotationsAttr().Get(timecode)
+            scales = animation.GetScalesAttr().Get(timecode)
+            joints = animation.GetJointsAttr().Get()
+
+            animation_new_path = "/World/AnimationGraph/newAnimation"
+            animation_new = UsdSkel.Animation.Define(stage, animation_new_path)
+            animation_new_prim = animation_new.GetPrim()
+
+            with Sdf.ChangeBlock():
+                animation_new.GetJointsAttr().Set(joints)
+                # animation_new.GetTranslationsAttr().Set(trans)
+                animation_new.GetRotationsAttr().Set(rots)
+                # animation_new.GetScalesAttr().Set(scales)
+            
+            # skeleton_bindingAPI.GetAnimationSourceRel().SetTargets([animation_new_path])
+
+            return
+
+
+            attrs = [src_skel_prim.GetAttribute(attr_name) for attr_name in src_skel_anim.GetSchemaAttributeNames()]
+
+            rt = src_skel_prim.GetAttribute("rotations.timeSamples")
+
+            print("rt", rt)
+
+            # for attr in attrs:
+            #     print("attr", attr)
+
+            for c, attr in enumerate(attrs):
+                
+                u = []
+                # elements = attr.Get(u)
+                print(c, attr, type(attr),  attr.HasValue(), attr.HasAuthoredValue())
+                # if attr.HasValue():
+                #     elements = list(attr.Get())
+                #     print("elements", elements)
+
+                # time_samples = attr.GetTimeSamples()
+                # if len(time_samples) > 0:
+                #     print(f"attr with {len(time_samples)} time samples", attr)
+                #     print("time_samples", type(time_samples), time_samples)
+                
+                # print("GetTimeSamplesInInterval()", attr.GetTimeSamplesInInterval())
