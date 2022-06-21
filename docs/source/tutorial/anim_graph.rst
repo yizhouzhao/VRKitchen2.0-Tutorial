@@ -60,7 +60,7 @@ Create a new animation graph and assign skeleton:
         path=Sdf.Path(anim_graph_path), skeleton_path=Sdf.Path(skeleton_path))
 
     
-Apply the animation to the ``skeleton root``(e.g. "/World/character/Hips0/Skeleton"):
+Apply the animation to the ``skeleton root``:
 
 .. figure:: ./img/graph_apply_animgraph.png
    :alt: anim graph apply
@@ -68,7 +68,7 @@ Apply the animation to the ``skeleton root``(e.g. "/World/character/Hips0/Skelet
 
 .. code:: python
 
-    skel_root_path = "/World/character/Hips0/"
+    skel_root_path = "/World/character/Hips0/" #(e.g. Hips0 for "/World/character/Hips0/Skeleton")
     omni.kit.commands.execute("ApplyAnimationGraphAPICommand", \
         paths=[Sdf.Path(skel_root_path)], animation_graph_path=Sdf.Path(anim_graph_path))
 
