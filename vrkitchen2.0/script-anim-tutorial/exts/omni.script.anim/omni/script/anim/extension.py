@@ -274,6 +274,9 @@ class MyExtension(omni.ext.IExt):
 
         # print("t, q", t, q)
         '''
+        self._usd_context = omni.usd.get_context()
+        # omni.usd.get_context().open_stage_async(path)
+        stage = self._usd_context.get_stage()
         
         from omni.anim.graph.ui.scripts.extension import PublicExtension
 
@@ -285,6 +288,25 @@ class MyExtension(omni.ext.IExt):
 
         print("node_graph: ", node_graph._path_to_node)
 
+        # node_graph._on_create_node("/World/AnimationGraph/Animation")
+
+        anim_clip_node = node_graph._path_to_node.get(Sdf.Path("/World/AnimationGraph/Animation"))
+        root_node = node_graph._path_to_node.get(Sdf.Path("/World/AnimationGraph"))
+
+        root_input_port = root_node.ports[0]
+        print("root ports", root_input_port.kind, root_input_port.rel)
+
+        output_port = anim_clip_node.output
+
+        print("anim port", output_port)
+
+        node_graph.create_connection(output_port,root_input_port)
+        
+
+        # node_graph._create_node_from_prim(stage.GetPrimAtPath("/World/AnimationGraph/Animation"))
+        # root_node = node_graph._path_to_node[Sdf.Path("/World/AnimationGraph")]
+
+        # _on_create_node
 
     def test_anim_graph(self):
         
@@ -294,12 +316,33 @@ class MyExtension(omni.ext.IExt):
         import carb
 
         self._usd_context = omni.usd.get_context()
-        stage = self._usd_context.get_stage()
+        # omni.usd.get_context().open_stage_async(path)
+        self.stage = self._usd_context.get_stage()
 
+        character_path = "/World/peasant_girl_converted"
+        anim_path = "/World/silly_dance_converted"
+        
+        character_usd = "E:/researches/VRKitchen2.0-Tutorial/asset/mixamo/peasant_girl_converted.usd"
+        anim_usd = "E:/researches/VRKitchen2.0-Tutorial/asset/mixamo/silly_dancing_converted.usd"
+
+        prim = self.stage.GetPrimAtPath(character_path)
+        if not prim.IsValid():
+            prim = self.stage.DefinePrim(character_path)
+
+        success_bool = prim.GetReferences().AddReference(character_usd)
+        assert success_bool
+
+        prim = self.stage.GetPrimAtPath(anim_path)
+        if not prim.IsValid():
+            prim = self.stage.DefinePrim(anim_path)
+
+        success_bool = prim.GetReferences().AddReference(anim_usd)
+
+
+        '''
         anim_graph_path = "/World/AnimationGraph"
-        skeleton_path = "/World/peasant_girl/Hips0/Skeleton"
-        character_path = "/World/peasant_girl"
-        # '''
+        skeleton_path = "/World/peasant_girl_converted/Hips0/Skeleton"
+
         ### anim_graph = AnimGraphSchemaTools.createAnimationGraph(stage, Sdf.Path("/World/AnimationGraph"))
         omni.kit.commands.execute("CreateAnimationGraphCommand", \
             path=Sdf.Path(anim_graph_path), skeleton_path=Sdf.Path(skeleton_path))
@@ -308,34 +351,34 @@ class MyExtension(omni.ext.IExt):
             paths=[Sdf.Path(character_path)], animation_graph_path=Sdf.Path(anim_graph_path))
 
         
-        # skeleton_prim = stage.GetPrimAtPath("/World/character/f_avg_root")
-        # skeleton_bindingAPI = UsdSkel.BindingAPI(skeleton_prim)
-        # skeleton_bindingAPI.GetAnimationSourceRel().SetTargets([])
-        # gt.ClearTargets(False)
-        # gt.ClearTargets(True)
-        # '''
+        skeleton_prim = stage.GetPrimAtPath(skeleton_path)
+        skeleton_bindingAPI = UsdSkel.BindingAPI(skeleton_prim)
+        skeleton_bindingAPI.GetAnimationSourceRel().SetTargets([])
+
 
         print("anim set")
 
         # create 
-        # omni.kit.commands.execute(
-        #             'CreatePrimCommand',
-        #             prim_type="AnimationClip",
-        #             prim_path="/World/AnimationGraph/Animation",
-        #             select_new_prim=True,
-        #         )
+        omni.kit.commands.execute(
+                    'CreatePrimCommand',
+                    prim_type="AnimationClip",
+                    prim_path="/World/AnimationGraph/Animation",
+                    select_new_prim=True,
+                )
+        
 
-        # animclip_prim = stage.GetPrimAtPath("/World/AnimationGraph/Animation")
-        # # animclip_bindingAPI = UsdSkel.BindingAPI(animclip_prim)
+        animclip_prim = stage.GetPrimAtPath("/World/AnimationGraph/Animation")
+        animclip_bindingAPI = UsdSkel.BindingAPI(animclip_prim)
 
-        # anim_clip = AnimGraphSchema.AnimationClip(animclip_prim)
-        # source_rel = anim_clip.GetInputsAnimationSourceRel()
+        anim_clip = AnimGraphSchema.AnimationClip(animclip_prim)
+        source_rel = anim_clip.GetInputsAnimationSourceRel()
 
-        # omni.kit.commands.execute(
-        #     'omni.anim.graph.ui.scripts.command.SetRelationshipTargetsCommand',
-        #     relationship=source_rel,
-        #     targets=[Sdf.Path("/World/character/f_avg_root/Animation")]
-        # )
+        omni.kit.commands.execute(
+            'omni.anim.graph.ui.scripts.command.SetRelationshipTargetsCommand',
+            relationship=source_rel,
+            targets=[Sdf.Path("/World/silly_dancing_converted/Hips0/mixamo_com")]
+        )
+        '''
     
     def convert_file(self):
         print("convert file test")
