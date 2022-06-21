@@ -127,4 +127,52 @@ Finally, connect connect node:
    :width: 80%
 
 
+.. warning::
 
+    The following Python code may cause errors
+
+    First, modify the original code in ``omni.anim.graph.ui.scripts.extension`` to make graph manager trackable
+
+    .. code:: python
+        # from line 13 to 16
+        class PublicExtension(omni.ext.IExt):
+            GRAPH_MANAGER = AnimationGraphManager()
+            def on_startup(self):
+                self._graph_manager = PublicExtension.GRAPH_MANAGER #AnimationGraphManager()
+        # ....
+
+    Then, connect nodes from scripts
+
+    .. code:: python
+
+        self._usd_context = omni.usd.get_context()
+        # omni.usd.get_context().open_stage_async(path)
+        stage = self._usd_context.get_stage()
+        
+        from omni.anim.graph.ui.scripts.extension import PublicExtension
+
+        graph_manager = PublicExtension.GRAPH_MANAGER
+        # print("graph manager dict", graph_manager._node_graph_dict)
+
+        from pxr import Sdf
+        node_graph = graph_manager.get_node_graph(Sdf.Path("/World/AnimationGraph"))
+        # print("node_graph: ", node_graph._path_to_node)
+        # node_graph._on_create_node("/World/AnimationGraph/Animation")
+
+        anim_clip_node = node_graph._path_to_node.get(Sdf.Path("/World/AnimationGraph/Animation"))
+        root_node = node_graph._path_to_node.get(Sdf.Path("/World/AnimationGraph"))
+
+        root_input_port = root_node.ports[0]
+        #print("root ports", root_input_port.kind, root_input_port.rel)
+
+        output_port = anim_clip_node.output
+        # print("anim port", output_port)
+
+        node_graph.create_connection(output_port,root_input_port)
+
+
+Now, the animaion is here:
+
+.. figure:: ./img/peasant_girl.*
+   :alt: anim graph anim peasant girl
+   :width: 80%
