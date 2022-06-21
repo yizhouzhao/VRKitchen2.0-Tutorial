@@ -1,3 +1,5 @@
+.. _ANIM_GRAPH_API:
+
 Animation Graph
 ======================================
 

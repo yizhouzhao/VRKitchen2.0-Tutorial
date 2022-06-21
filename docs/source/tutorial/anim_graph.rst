@@ -11,7 +11,7 @@ First, drag character and animation file into Omniverse
 
 .. note::
 
-    (Optional) We may apply Python code for import `USD` files (see more: :ref:`_STAGE_API`)
+    (Optional) We may apply Python code for import `USD` files (see more: :ref:`STAGE_API`)
 
     .. code:: python
 
@@ -40,3 +40,11 @@ Second, add animation graph
 .. figure:: ./img/graph_animgraph.png
    :alt: anim graph import
    :width: 80%
+
+
+.. note::
+
+    (Optional) We may apply Python code handle animation graph (see more: :ref:`ANIM_GRAPH_API`)
+
+    .. code:: python
+
