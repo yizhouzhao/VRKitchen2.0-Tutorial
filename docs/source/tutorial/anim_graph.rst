@@ -134,6 +134,7 @@ Finally, connect connect node:
     First, modify the original code in ``omni.anim.graph.ui.scripts.extension`` to make graph manager trackable
 
     .. code:: python
+        
         # from line 13 to 16
         class PublicExtension(omni.ext.IExt):
             GRAPH_MANAGER = AnimationGraphManager()
