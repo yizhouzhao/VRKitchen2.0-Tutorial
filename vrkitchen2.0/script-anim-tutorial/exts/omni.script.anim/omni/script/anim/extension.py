@@ -432,21 +432,21 @@ class MyExtension(omni.ext.IExt):
 
             src_skel_anim = UsdSkel.Animation(src_skel_prim)
 
-            print(src_skel_anim.GetSchemaAttributeNames())
+            # print(src_skel_anim.GetSchemaAttributeNames())
 
             rot_attr = src_skel_anim.GetRotationsAttr()
-            print("GetJointsAttr ()", src_skel_anim.GetJointsAttr().Get())
-            print("CetRotationsAttr ()", rot_attr.HasValue())
+            # print("GetJointsAttr ()", src_skel_anim.GetJointsAttr().Get())
+            # print("CetRotationsAttr ()", rot_attr.HasValue())
             # print("GetTranslationsAttr ()", src_skel_anim.GetTranslationsAttr().Get())
             
             n_time_samples = rot_attr.GetNumTimeSamples()
-            print("n_time_samples", n_time_samples) 
+            # print("n_time_samples", n_time_samples) 
 
             timeline = omni.timeline.get_timeline_interface()
-            current_frame_code = timeline.get_current_time() * stage.GetTimeCodesPerSecond()
+            # current_frame_code = timeline.get_current_time() * stage.GetTimeCodesPerSecond()
             
-            quats = src_skel_anim.GetRotationsAttr().Get(current_frame_code)
-            print(":rot_attr", current_frame_code, len(quats), quats)
+            # quats = src_skel_anim.GetRotationsAttr().Get(current_frame_code)
+            # print(":rot_attr", current_frame_code, len(quats), quats)
 
             # current_frame_code = 1.0
             # quats = src_skel_anim.GetRotationsAttr().Get(current_frame_code)
@@ -473,11 +473,20 @@ class MyExtension(omni.ext.IExt):
             animation_new = UsdSkel.Animation.Define(stage, animation_new_path)
             animation_new_prim = animation_new.GetPrim()
 
+            print("joints", len(joints), joints)
+            print("trans", len(trans), trans)
+            trans[0] = trans[0] + Gf.Vec3f(0,100,0)
+            print("trans", trans)
+            
+            print("scales", scales)
+
             with Sdf.ChangeBlock():
                 animation_new.GetJointsAttr().Set(joints)
-                # animation_new.GetTranslationsAttr().Set(trans)
+                animation_new.GetTranslationsAttr().Set(trans)
+                # animation_new.GetTranslationsAttr().Clear()
                 animation_new.GetRotationsAttr().Set(rots)
-                # animation_new.GetScalesAttr().Set(scales)
+                # animation_new.GetRotationsAttr().Clear()
+                animation_new.GetScalesAttr().Set(scales)
             
             # skeleton_bindingAPI.GetAnimationSourceRel().SetTargets([animation_new_path])
 
