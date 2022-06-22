@@ -67,4 +67,5 @@ The source code is available on `Github <https://https://github.com/yizhouzhao/G
    :caption: Third Party API
 
    party3rd/maya
-
+   party3rd/pxr_usd
+   
