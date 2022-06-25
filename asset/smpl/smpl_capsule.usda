@@ -1,0 +1,197 @@
+#usda 1.0
+(
+    defaultPrim = "capsules"
+    upAxis = "Y"
+)
+
+def Xform "capsules"
+{
+    token ui:displayGroup = "Material Graphs"
+    token ui:displayName = "capsules"
+    int ui:order = 1024
+
+    def Capsule "f_avg_L_Hip"
+    {
+        float3 xformOp:rotateXYZ = (-84.867615, -38.42815, 35.34509)
+        float3 xformOp:scale = (0.1, 0.1, 0.05740744)
+        double3 xformOp:translate = (0.0348042955, 0.8645229999999999, 0.023798)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+    }
+
+    def Capsule "f_avg_L_Knee"
+    {
+        float3 xformOp:rotateXYZ = (-88.94785, -4.8125534, 4.72508)
+        float3 xformOp:scale = (0.1, 0.1, 0.1827801)
+        double3 xformOp:translate = (0.08581944999999999, 0.637626, 0.01643045)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+    }
+
+    def Capsule "f_avg_L_Ankle"
+    {
+        float3 xformOp:rotateXYZ = (-83.52588, 1.7153682, -1.531744)
+        float3 xformOp:scale = (0.1, 0.1, 0.19299066)
+        double3 xformOp:translate = (0.09537694999999999, 0.263847, -0.0086648)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+    }
+
+    def Capsule "f_avg_L_Foot"
+    {
+        float3 xformOp:rotateXYZ = (-154.46204, -10.432527, 43.882935)
+        float3 xformOp:scale = (0.1, 0.1, 0.0644423)
+        double3 xformOp:translate = (0.10126895, 0.044850600000000004, 0.02676945)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+    }
+
+    def Capsule "f_avg_R_Hip"
+    {
+        float3 xformOp:rotateXYZ = (-86.91429, 37.762466, -35.911922)
+        float3 xformOp:scale = (0.1, 0.1, 0.056346502)
+        double3 xformOp:translate = (-0.0353823045, 0.8648345, 0.02542325)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+    }
+
+    def Capsule "f_avg_R_Knee"
+    {
+        float3 xformOp:rotateXYZ = (-88.58041, 5.5692315, -5.4331336)
+        float3 xformOp:scale = (0.1, 0.1, 0.18626112)
+        double3 xformOp:translate = (-0.08796465, 0.6350290000000001, 0.01843275)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+    }
+
+    def Capsule "f_avg_R_Ankle"
+    {
+        float3 xformOp:rotateXYZ = (-83.76824, -2.081898, 1.8669792)
+        float3 xformOp:scale = (0.1, 0.1, 0.19308671)
+        double3 xformOp:translate = (-0.09902654999999999, 0.25788495, -0.0071057)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+    }
+
+    def Capsule "f_avg_R_Foot"
+    {
+        float3 xformOp:rotateXYZ = (-158.51364, 9.868981, -48.935246)
+        float3 xformOp:scale = (0.1, 0.1, 0.064304106)
+        double3 xformOp:translate = (-0.10303355, 0.04286115, 0.03089835)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+    }
+
+    def Capsule "f_avg_Spine1"
+    {
+        float3 xformOp:rotateXYZ = (77.87403, 1.3604736, 1.0992337)
+        float3 xformOp:scale = (0.1, 0.1, 0.052821096)
+        double3 xformOp:translate = (-0.0021304145, 0.9609430000000001, 0.01672854)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+    }
+
+    def Capsule "f_avg_Spine2"
+    {
+        float3 xformOp:rotateXYZ = (89.23121, -1.6066481, -1.5852363)
+        float3 xformOp:scale = (0.1, 0.1, 0.06385985)
+        double3 xformOp:translate = (-0.0015940415, 1.0764, 0.004779475)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+    }
+
+    def Capsule "f_avg_Spine3"
+    {
+        float3 xformOp:rotateXYZ = (119.591576, -2.057304, -3.5334637)
+        float3 xformOp:scale = (0.1, 0.1, 0.028234523)
+        double3 xformOp:translate = (0.0012100284999999999, 1.164765, 0.017856584999999998)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+    }
+
+    def Capsule "f_avg_Neck"
+    {
+        float3 xformOp:rotateXYZ = (76.55971, 0.52518934, 0.41447085)
+        float3 xformOp:scale = (0.1, 0.1, 0.10705842)
+        double3 xformOp:translate = (0.0012423059999999999, 1.293423, 0.006907449999999999)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+    }
+
+    def Capsule "f_avg_Head"
+    {
+        float3 xformOp:rotateXYZ = (128.85419, -2.516454, -5.255782)
+        float3 xformOp:scale = (0.1, 0.1, 0.04005301)
+        double3 xformOp:translate = (0.002019571, 1.428706, 0.007127350000000001)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+    }
+
+    def Capsule "f_avg_L_Collar"
+    {
+        float3 xformOp:rotateXYZ = (72.61572, -31.387594, -23.329962)
+        float3 xformOp:scale = (0.1, 0.1, 0.07228753)
+        double3 xformOp:translate = (0.03987276, 1.2481915, 0.013352779999999998)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+    }
+
+    def Capsule "f_avg_L_Shoulder"
+    {
+        float3 xformOp:rotateXYZ = (77.059425, -69.10783, -57.478436)
+        float3 xformOp:scale = (0.1, 0.1, 0.04566059)
+        double3 xformOp:translate = (0.12018045000000001, 1.3229515, -0.00873107)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+    }
+
+    def Capsule "f_avg_L_Elbow"
+    {
+        float3 xformOp:rotateXYZ = (-23.502905, -83.1891, 20.924698)
+        float3 xformOp:scale = (0.1, 0.1, 0.12651633)
+        double3 xformOp:translate = (0.2884625, 1.3328375000000001, -0.0261367)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+    }
+
+    def Capsule "f_avg_L_Wrist"
+    {
+        float3 xformOp:rotateXYZ = (90.277985, -87.83285, -88.11066)
+        float3 xformOp:scale = (0.1, 0.1, 0.119094685)
+        double3 xformOp:translate = (0.5330955, 1.3313575, -0.039874049999999994)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+    }
+
+    def Capsule "f_avg_L_Hand"
+    {
+        float3 xformOp:rotateXYZ = (-36.250713, -78.384995, 29.88789)
+        float3 xformOp:scale = (0.1, 0.1, 0.04066675)
+        double3 xformOp:translate = (0.6919390000000001, 1.3310195, -0.046454999999999996)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+    }
+
+    def Capsule "f_avg_R_Collar"
+    {
+        float3 xformOp:rotateXYZ = (70.11685, 32.07176, 22.806345)
+        float3 xformOp:scale = (0.1, 0.1, 0.07253821)
+        double3 xformOp:translate = (-0.036292790000000005, 1.2471044999999998, 0.010884849999999998)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+    }
+
+    def Capsule "f_avg_R_Shoulder"
+    {
+        float3 xformOp:rotateXYZ = (73.35368, 69.013275, 54.22294)
+        float3 xformOp:scale = (0.1, 0.1, 0.047770318)
+        double3 xformOp:translate = (-0.1194106, 1.3213, -0.0149216)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+    }
+
+    def Capsule "f_avg_R_Elbow"
+    {
+        float3 xformOp:rotateXYZ = (-33.117455, 84.41093, -30.182076)
+        float3 xformOp:scale = (0.1, 0.1, 0.12358251)
+        double3 xformOp:translate = (-0.287007, 1.3311160000000002, -0.02990355)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+    }
+
+    def Capsule "f_avg_R_Wrist"
+    {
+        float3 xformOp:rotateXYZ = (67.7264, 87.82369, 65.72684)
+        float3 xformOp:scale = (0.1, 0.1, 0.12267698)
+        double3 xformOp:translate = (-0.5325905, 1.328851, -0.04175015)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+    }
+
+    def Capsule "f_avg_R_Hand"
+    {
+        float3 xformOp:rotateXYZ = (-34.823715, 81.029045, -30.003754)
+        float3 xformOp:scale = (0.1, 0.1, 0.040697835)
+        double3 xformOp:translate = (-0.695379, 1.3295379999999999, -0.048725550000000006)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+    }
+}
+
