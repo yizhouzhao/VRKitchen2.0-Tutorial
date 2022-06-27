@@ -1,9 +1,15 @@
-Template for the Read the Docs tutorial
-=======================================
+.. figure:: ./docs/image/logo_large.png
+   :alt: Title image
+   :width: 100%
 
-This GitHub template includes fictional Python library
-with some basic Sphinx docs.
+Welcome to VRKitchen 2.0's Tutorial!
+=========================================================================================
 
-Read the tutorial here:
+**VRKitchen 2.0** (06/01/2022) is a toolkit for generate indoor scened and tasks in `Nvidia Omniverse <https://www.nvidia.com/en-us/omniverse/>`_
+This tutorial helpes you generate photo-realistic and physics-reliable indoor environment to help the researches in generate AI.
 
-https://docs.readthedocs.io/en/stable/tutorial/
+This documentation also offers a *simple* and *intuitive* API despite the `official documentation <https://docs.omniverse.nvidia.com/py/kit/docs/api/>`_ 
+
+Checkout our `documentation<https://vrkitchen20-tutorial.readthedocs.io/en/latest/index.html>`_
+
+The source code is available on `Github <https://github.com/yizhouzhao/GenMotion>`_
