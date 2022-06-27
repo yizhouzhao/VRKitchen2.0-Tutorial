@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 .. figure:: ./docs/image/logo_large.png
+=======
+.. figure:: ../image/logo_large.png
+>>>>>>> 824edd72ace7a50271f7798428410670e00d8c26
    :alt: Title image
    :width: 100%
 
