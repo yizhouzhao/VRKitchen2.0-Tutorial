@@ -1,4 +1,4 @@
-.. figure:: ./docs/image/logo_large.png
+.. figure:: docs/image/logo_large.png
    :alt: Title image
    :width: 100%
 
