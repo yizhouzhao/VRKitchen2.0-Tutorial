@@ -12,8 +12,20 @@ Go to ``Menu bar`` -> ``Window`` -> ``Extensions``, click the ``plus`` sign on t
    :alt: build_extension_window
    :width: 80%
 
-Set up the file name and extension name and click ``OK``. If on your computer, the `Visual Studio code <https://code.visualstudio.com/>` is installed, the script will be open automatically.
+Set up the file name and extension name and click ``OK``. If on your computer, the `Visual Studio code <https://code.visualstudio.com/>`_ is installed, the script will be open automatically.
 
 Well done!
 
+Method two: add an existing project
+-------------------------------------------------
+
+.. figure:: ./img/build_extension_add.png
+   :alt: build_extension_add
+   :width: 80%
+
+Go to ``Menu bar`` -> ``Window`` -> ``Extensions``, click the ``setting gear`` sign on the top.
+
+Then add your existing project with the path ending with ``.exts``.
+
+Well done!
 
