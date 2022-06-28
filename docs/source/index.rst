@@ -31,6 +31,7 @@ The source code is available on `Github <https://https://github.com/yizhouzhao/G
    :maxdepth: 2
    :caption: Tutorial
 
+   tutorial/build_extension
    tutorial/anim_mixamo
    tutorial/anim_graph
    tutorial/extension
