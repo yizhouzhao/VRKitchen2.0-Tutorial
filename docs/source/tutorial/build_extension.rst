@@ -3,6 +3,12 @@ B.1 Build your first extension in Omnverse
 
 In this tutorial, we are going to show how to create an extension in Omniverse create. The official documentaion can be found `here <https://docs.omniverse.nvidia.com/prod_extensions/prod_extensions/overview.html>`_.
 
+.. raw:: html
+
+    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; height: auto;">
+        <iframe width="853" height="480" src="https://www.youtube.com/embed/eGxV_PGNpOg" title="How to Build an Omniverse Extension in Less Than 10 Minutes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+
 Method one: start an extension in Omniverse
 -------------------------------------------------
 
