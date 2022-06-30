@@ -36,6 +36,8 @@ class MyExtension(omni.ext.IExt):
                 ui.Button("Test Animation", clicked_fn= self.test_anim_graph)
                 ui.Button("Convert file", clicked_fn= self.convert_file)
                 ui.Button("Test edit animation curve", clicked_fn= self.test_edit_curve)
+                ui.Button("Test Pose Provider", clicked_fn= self.test_pose_provider)
+                
                 
                 
     
@@ -517,3 +519,81 @@ class MyExtension(omni.ext.IExt):
                 #     print("time_samples", type(time_samples), time_samples)
                 
                 # print("GetTimeSamplesInInterval()", attr.GetTimeSamplesInInterval())
+
+    def test_pose_provider(self):
+        import omni.anim.graph.core as ag
+
+        from pxr import UsdSkel
+
+        print("test pose provider")
+
+        timeline = omni.timeline.get_timeline_interface()
+        stage = omni.usd.get_context().get_stage()
+
+        async def test_PoseProvider_pose_provider():
+            timeline.stop()
+            timeline.set_current_time(0.0)
+            timeline.set_auto_update(False)
+            await omni.kit.app.get_app().next_update_async()
+            await omni.kit.app.get_app().next_update_async()
+
+            stage.SetEndTimeCode(100)
+            timeline.set_looping(True)
+
+            await omni.kit.app.get_app().next_update_async()
+            await omni.kit.app.get_app().next_update_async()
+            timeline.play()
+            
+            await omni.kit.app.get_app().next_update_async()
+            await omni.kit.app.get_app().next_update_async()
+
+            #character = ag.get_character("/World/Character")
+            character = ag.get_character("/World/smpl_f")
+
+
+            for i in range(1):
+                print(f"time {i}")
+                previous_frame_code = timeline.get_current_time() * stage.GetTimeCodesPerSecond()
+                timeline.forward_one_frame()
+                current_frame_code = 100 # timeline.get_current_time() * stage.GetTimeCodesPerSecond()
+
+                # delta_trans_carb = carb.Float3(10, 0, 0)
+                # delta_quat_carb = carb.Float4(0, 0, 0, 0)
+                # character.set_transform_delta("PoseProvider", delta_trans_carb, delta_quat_carb)
+
+                #animprim = stage.GetPrimAtPath("/World/stand_idle_loop_skelanim")
+                animprim = stage.GetPrimAtPath("/World/chicken2/f_avg_root/Animation")
+                
+                anim = UsdSkel.Animation(animprim)
+                trans = anim.GetTranslationsAttr().Get(current_frame_code)
+                quats = anim.GetRotationsAttr().Get(current_frame_code)
+
+                trans = [carb.Float3(e[0],e[1],e[2]) for e in trans]
+                quats =  [carb.Float4(e.imaginary[0], e.imaginary[1], e.imaginary[2], e.real) for e in quats ]
+                print("trans", trans)
+                print("quats", quats)
+                character.set_variable("poses", trans)
+                character.set_variable("rots", quats)
+
+                target_pos = character.get_variable("poses")
+                print("target_pos", target_pos)
+
+                # scales = anim.GetScalesAttr().Get(current_frame_code)
+                # translist = [carb.Float3(i[0], i[1], i[2]) for i in trans ]
+                tran_root = carb.Float3(1.0, 0.0, 0.0)
+                # quatslist = [carb.Float4(i.imaginary[0], i.imaginary[1], i.imaginary[2], i.real) for i in quats ]
+                #quatslist[0] = carb.Float4(0.0, 0.0, 0.0, 1.0)
+                #scaleslist = [carb.Float3(i)  for i in scales ]
+                character.set_variable("tran_root", tran_root)
+
+
+                await omni.kit.app.get_app().next_update_async()
+                await omni.kit.app.get_app().next_update_async()
+
+            timeline.set_looping(False)
+            timeline.set_auto_update(True)
+            timeline.pause()
+            await omni.kit.app.get_app().next_update_async()
+            await omni.kit.app.get_app().next_update_async()
+
+        asyncio.ensure_future(test_PoseProvider_pose_provider())

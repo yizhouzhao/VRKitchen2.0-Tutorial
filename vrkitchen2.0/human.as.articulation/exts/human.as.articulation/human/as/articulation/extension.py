@@ -21,6 +21,8 @@ class MyExtension(omni.ext.IExt):
                 ui.Button("humanoid test 2", clicked_fn=self.test_smpl)
                 ui.Button("Joint test 3", clicked_fn=self.test_joint)
                 ui.Button("Joint test runtime 4", clicked_fn=self.test_joint_runtime)
+                ui.Button("Test warp", clicked_fn=self.test_warp)
+                
 
     def on_shutdown(self):
         print("[human.as.articulation] MyExtension shutdown")
@@ -174,3 +176,13 @@ class MyExtension(omni.ext.IExt):
        
         
         
+    def test_warp(self):
+        import numpy as np
+
+        import warp as wp
+        from pxr import Usd, UsdGeom
+
+        import os
+
+        wp.init()
+        print(wp.config.version)
