@@ -34,6 +34,7 @@ The source code is available on `Github <https://https://github.com/yizhouzhao/G
    tutorial/build_extension
    tutorial/anim_mixamo
    tutorial/anim_graph
+   tutorial/anim_pose_provider
    tutorial/extension
    tutorial/indoor   
    tutorial/articulated_object  
