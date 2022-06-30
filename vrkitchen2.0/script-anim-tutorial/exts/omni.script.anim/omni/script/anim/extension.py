@@ -530,9 +530,9 @@ class MyExtension(omni.ext.IExt):
         timeline = omni.timeline.get_timeline_interface()
         stage = omni.usd.get_context().get_stage()
 
-        stage.SetStartTimeCode(10)
-        stage.SetEndTimeCode(100)
-        return 
+        # stage.SetStartTimeCode(10)
+        # stage.SetEndTimeCode(100)
+        # return 
 
         async def test_PoseProvider_pose_provider():
             timeline.stop()
