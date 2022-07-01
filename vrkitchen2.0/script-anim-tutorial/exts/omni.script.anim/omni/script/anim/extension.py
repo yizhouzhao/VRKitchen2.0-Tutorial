@@ -29,14 +29,19 @@ class MyExtension(omni.ext.IExt):
         self._window = ui.Window("Script Animation Tutorial", width=300, height=300)
         with self._window.frame:
             with ui.VStack():
-                ui.Label("Some Label")
-                ui.Button("Click Me", clicked_fn= self.on_click)
-                ui.Button("Test simple", clicked_fn= self._on_button_add_xform_keys)
-                ui.Button("Test get position in anim", clicked_fn= self.get_transform_in_anim)
-                ui.Button("Test Animation", clicked_fn= self.test_anim_graph)
-                ui.Button("Convert file", clicked_fn= self.convert_file)
-                ui.Button("Test edit animation curve", clicked_fn= self.test_edit_curve)
-                ui.Button("Test Pose Provider", clicked_fn= self.test_pose_provider)
+                with ui.HStack():
+                    ui.Label("Some Label")
+                    ui.Button("Click Me", clicked_fn= self.on_click)
+                    ui.Button("Test simple", clicked_fn= self._on_button_add_xform_keys)
+                    ui.Button("Test get position in anim", clicked_fn= self.get_transform_in_anim)
+                with ui.HStack():
+                    ui.Button("Test Animation", clicked_fn= self.test_anim_graph)
+                    ui.Button("Convert file", clicked_fn= self.convert_file)
+                    ui.Button("Test edit animation curve", clicked_fn= self.test_edit_curve)
+                with ui.HStack():
+                    ui.Button("Test Pose Provider", clicked_fn= self.test_pose_provider)
+                    ui.Button("Test Pose Provider 2", clicked_fn= self.test_pose_provider2)
+                    
                 
                 
                 
@@ -523,7 +528,7 @@ class MyExtension(omni.ext.IExt):
     def test_pose_provider(self):
         import omni.anim.graph.core as ag
 
-        from pxr import UsdSkel
+        from pxr import UsdSkel, UsdGeom, Gf, Sdf
 
         print("test pose provider")
 
@@ -554,26 +559,53 @@ class MyExtension(omni.ext.IExt):
             #character = ag.get_character("/World/Character")
             character = ag.get_character("/World/smpl_f")
 
+            #animprim = stage.GetPrimAtPath("/World/stand_idle_loop_skelanim")
+            animprim = stage.GetPrimAtPath("/World/chicken2/f_avg_root/Animation")
+            anim = UsdSkel.Animation(animprim)
+            joints = anim.GetJointsAttr().Get()
 
             for i in range(1):
                 print(f"time {i}")
                 previous_frame_code = timeline.get_current_time() * stage.GetTimeCodesPerSecond()
                 timeline.forward_one_frame()
-                current_frame_code = 100 # timeline.get_current_time() * stage.GetTimeCodesPerSecond()
+                current_frame_code = timeline.get_current_time() * stage.GetTimeCodesPerSecond()
 
                 # delta_trans_carb = carb.Float3(10, 0, 0)
                 # delta_quat_carb = carb.Float4(0, 0, 0, 0)
                 # character.set_transform_delta("PoseProvider", delta_trans_carb, delta_quat_carb)
 
-                #animprim = stage.GetPrimAtPath("/World/stand_idle_loop_skelanim")
-                animprim = stage.GetPrimAtPath("/World/chicken2/f_avg_root/Animation")
                 
-                anim = UsdSkel.Animation(animprim)
                 trans = anim.GetTranslationsAttr().Get(current_frame_code)
                 quats = anim.GetRotationsAttr().Get(current_frame_code)
 
                 trans = [carb.Float3(e[0],e[1],e[2]) for e in trans]
-                quats =  [carb.Float4(e.imaginary[0], e.imaginary[1], e.imaginary[2], e.real) for e in quats ]
+                quats = [carb.Float4(e.imaginary[0], e.imaginary[1], e.imaginary[2], e.real) for e in quats ]
+
+                print("current_frame_code: ", current_frame_code)
+                print("len trans", len(trans), trans)
+                print("len joints", len(joints))
+                # debug
+                for jj, t in enumerate(trans):
+                    cube_name = joints[jj].split("/")[-1]
+                    cube = stage.DefinePrim(f"/World/Cube/{cube_name}", "Xform")
+                    cube_mat = Gf.Matrix4d().SetRotate(Gf.Quatd(quats[jj][3], quats[jj][0], quats[jj][1], quats[jj][2])) * \
+                         Gf.Matrix4d().SetTranslate(Gf.Vec3d(t[0], t[1], t[2]))
+                    
+                    print(jj, "cube_mat: ", cube_name, cube_mat)
+                    # UsdGeom.Xformable(cube).AddTransformOp().Set(cube_mat)
+
+                    omni.kit.commands.execute(
+                        "TransformPrimCommand",
+                        path=cube.GetPath().pathString,
+                        new_transform_matrix=cube_mat,
+                    )
+
+                    # attr_matrix = cube.CreateAttribute("xformOp:transform", Sdf.ValueTypeNames.Matrix4d, False)
+                    # attr_matrix.Set(cube_mat)
+
+                    # cube.GetAttribute("xformOp:scale").Set(Gf.Vec3f([0.1, 0.1, 0.1]))
+
+                
                 print("trans", trans)
                 print("quats", quats)
                 character.set_variable("poses", trans)
@@ -584,7 +616,103 @@ class MyExtension(omni.ext.IExt):
 
                 # scales = anim.GetScalesAttr().Get(current_frame_code)
                 # translist = [carb.Float3(i[0], i[1], i[2]) for i in trans ]
-                tran_root = carb.Float3(1.0, 0.0, 0.0)
+                tran_root = carb.Float3(0.001 * i, 0.0, 0.0)
+                # quatslist = [carb.Float4(i.imaginary[0], i.imaginary[1], i.imaginary[2], i.real) for i in quats ]
+                #quatslist[0] = carb.Float4(0.0, 0.0, 0.0, 1.0)
+                #scaleslist = [carb.Float3(i)  for i in scales ]
+                character.set_variable("tran_root", tran_root)
+
+
+                await omni.kit.app.get_app().next_update_async()
+                await omni.kit.app.get_app().next_update_async()
+
+            timeline.set_looping(False)
+            timeline.set_auto_update(True)
+            timeline.pause()
+            await omni.kit.app.get_app().next_update_async()
+            await omni.kit.app.get_app().next_update_async()
+
+        asyncio.ensure_future(test_PoseProvider_pose_provider())
+
+    
+    def test_pose_provider2(self):
+        print("test_pose_provider2")
+        from .smplx.utils import generate_trans_and_rots_for_pose_provider
+        import omni.anim.graph.core as ag
+        from pxr import UsdSkel, UsdGeom, Gf, Sdf
+
+        print("test pose provider")
+
+        timeline = omni.timeline.get_timeline_interface()
+        stage = omni.usd.get_context().get_stage()
+
+        # stage.SetStartTimeCode(10)
+        # stage.SetEndTimeCode(100)
+        # return 
+
+        async def test_PoseProvider_pose_provider():
+            timeline.stop()
+            timeline.set_current_time(0.0)
+            timeline.set_auto_update(False)
+            await omni.kit.app.get_app().next_update_async()
+            await omni.kit.app.get_app().next_update_async()
+
+            stage.SetEndTimeCode(100)
+            timeline.set_looping(True)
+
+            await omni.kit.app.get_app().next_update_async()
+            await omni.kit.app.get_app().next_update_async()
+            timeline.play()
+            
+            await omni.kit.app.get_app().next_update_async()
+            await omni.kit.app.get_app().next_update_async()
+
+            #character = ag.get_character("/World/Character")
+            character = ag.get_character("/World/smplx")
+
+
+            for i in range(1):
+                print(f"time {i}")
+                previous_frame_code = timeline.get_current_time() * stage.GetTimeCodesPerSecond()
+                timeline.forward_one_frame()
+                current_frame_code = timeline.get_current_time() * stage.GetTimeCodesPerSecond()
+
+                # delta_trans_carb = carb.Float3(10, 0, 0)
+                # delta_quat_carb = carb.Float4(0, 0, 0, 0)
+                # character.set_transform_delta("PoseProvider", delta_trans_carb, delta_quat_carb)
+
+                trans, quats = generate_trans_and_rots_for_pose_provider()
+
+                # trans = [carb.Float3(e[0],e[1],e[2]) for e in trans]
+                # quats = [carb.Float4(e.imaginary[0], e.imaginary[1], e.imaginary[2], e.real) for e in quats ]
+
+                # debug
+                from .smplx.constants import smplx_joint2path
+                joints = list(smplx_joint2path.values())
+                for jj, t in enumerate(trans):
+                    cube_name = joints[jj] #.split("/")[-1]
+                    cube = stage.DefinePrim(f"/World/Cube/{cube_name}", "Xform")
+                    cube_mat = Gf.Matrix4d().SetRotate(Gf.Quatd(quats[jj][3], quats[jj][0], quats[jj][1], quats[jj][2])) * \
+                         Gf.Matrix4d().SetTranslate(Gf.Vec3d(t[0], t[1], t[2]))
+                    
+                    print(jj, "cube_mat: ", cube_name, cube_mat)
+                    # UsdGeom.Xformable(cube).AddTransformOp().Set(cube_mat)
+
+                    omni.kit.commands.execute(
+                        "TransformPrimCommand",
+                        path=cube.GetPath().pathString,
+                        new_transform_matrix=cube_mat,
+                    )
+
+                character.set_variable("poses", trans)
+                character.set_variable("rots", quats)
+
+                target_pos = character.get_variable("poses")
+                print("target_pos", target_pos)
+
+                # scales = anim.GetScalesAttr().Get(current_frame_code)
+                # translist = [carb.Float3(i[0], i[1], i[2]) for i in trans ]
+                tran_root = carb.Float3(0.001 * i, 0.0, 0.0)
                 # quatslist = [carb.Float4(i.imaginary[0], i.imaginary[1], i.imaginary[2], i.real) for i in quats ]
                 #quatslist[0] = carb.Float4(0.0, 0.0, 0.0, 1.0)
                 #scaleslist = [carb.Float3(i)  for i in scales ]
