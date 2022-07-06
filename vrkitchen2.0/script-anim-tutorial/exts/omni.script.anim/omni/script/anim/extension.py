@@ -5,6 +5,7 @@ import omni.ui as ui
 import carb
 import importlib
 import types
+import time
 
 import asyncio
 
@@ -41,9 +42,8 @@ class MyExtension(omni.ext.IExt):
                 with ui.HStack():
                     ui.Button("Test Pose Provider", clicked_fn= self.test_pose_provider)
                     ui.Button("Test Pose Provider 2", clicked_fn= self.test_pose_provider2)
-                    
-                
-                
+                with ui.HStack():
+                    ui.Button("Test samp", clicked_fn= self.test_samp)   
                 
     
     def on_click(self):
@@ -723,9 +723,22 @@ class MyExtension(omni.ext.IExt):
                 await omni.kit.app.get_app().next_update_async()
 
             timeline.set_looping(False)
-            timeline.set_auto_update(True)
-            timeline.pause()
+            # timeline.set_auto_update(True)
+            # timeline.pause()
             await omni.kit.app.get_app().next_update_async()
             await omni.kit.app.get_app().next_update_async()
 
         asyncio.ensure_future(test_PoseProvider_pose_provider())
+
+    def test_samp(self):
+        print("test_samp")
+        from .samp.samp_demo import SAMP_Demo
+
+        demo = SAMP_Demo()
+        demo._setup_callbacks()
+
+        demo.Start()
+
+        # from .smplx.utils import get_trans_and_rots_for_pose_provider
+        # get_trans_and_rots_for_pose_provider()
+    

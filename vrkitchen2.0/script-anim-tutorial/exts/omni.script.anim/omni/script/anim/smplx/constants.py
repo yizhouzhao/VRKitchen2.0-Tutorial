@@ -6,3 +6,4 @@ smplx_joints = ["root", "root/pelvis", "root/pelvis/left_hip", "root/pelvis/left
 
 smplx_joint_num = len(smplx_joints)
 smplx_joint2path = {value.split("/")[-1]: value for value in smplx_joints}
+smplx_joint2parent = {value.split("/")[-1]: value.split("/")[-2] for value in smplx_joints[1:]}
