@@ -127,7 +127,7 @@ class SAMP_Demo:
         async def Updates():
             self.timeline.stop()
             self.timeline.set_current_time(0.0)
-            self.timeline.set_auto_update(False)
+            self.timeline.set_auto_update(False)    
             self.timeline.set_looping(False)
             await omni.kit.app.get_app().next_update_async()
             await omni.kit.app.get_app().next_update_async()
@@ -137,7 +137,7 @@ class SAMP_Demo:
             await omni.kit.app.get_app().next_update_async()
             await omni.kit.app.get_app().next_update_async()
 
-            for time in range(30):
+            for time in range(100):
                 self.timeline.forward_one_frame()
                 current_frame_code = self.timeline.get_current_time() * self.stage.GetTimeCodesPerSecond()
                 print("time: ", self.stage.GetTimeCodesPerSecond(), current_frame_code)
@@ -147,7 +147,8 @@ class SAMP_Demo:
                     self.Setup()
                 else:
                     self.Feed()
-                
+                    self.model.predict()
+                    self.Read()
 
                 await omni.kit.app.get_app().next_update_async()
                 await omni.kit.app.get_app().next_update_async()
@@ -211,7 +212,7 @@ class SAMP_Demo:
                 v2 = time_metric / (len_sample - 1) * move
                 positions_blend[i] = positions_blend[i - 1] + Gf.Lerp(bias_pos, v1, v2)
 
-            # print("positions_blend: ", positions_blend)
+            # print("positions_blend: ", move, positions_blend)
 
         for i in range(len_sample):
             pos = Gf.Lerp(self.UserControl, self.GoalSeries.Transformations[i].ExtractTranslation(), positions_blend[i])
@@ -247,7 +248,7 @@ class SAMP_Demo:
             mat = joint2mat[joint]
             bone.transform = mat  
             
-            m = mat * root_mat.GetInverse() # relative to root
+            m = reflex_x_mat * mat * root_mat.GetInverse() * reflex_x_mat # relative to root
 
             rel_pos = m.ExtractTranslation() 
             rel_forward_dir = m.GetRow(2)
@@ -255,10 +256,11 @@ class SAMP_Demo:
             self.model.x.extend([rel_pos[0], rel_pos[1], rel_pos[2]])
             self.model.x.extend([rel_forward_dir[0], rel_forward_dir[1], rel_forward_dir[2]])
             self.model.x.extend([rel_up_dir[0], rel_up_dir[1], rel_up_dir[2]])
-            self.model.x.extend(bone.velocity.copy())
+            self.model.x.extend(bone.velocity.copy()) 
+
+            # print("bone velocity: ", bone.velocity)
 
         print("Pivot Bone Positions / Velocities :", len(self.model.x))
-        # print("self.model.x", self.model.x)
 
         # Input Inverse Bone Positions
         for i, joint in enumerate(joint2mat):
@@ -268,6 +270,8 @@ class SAMP_Demo:
 
         print("Pivot Inverse Bone Positions :", len(self.model.x))
         # print("self.model.x", self.model.x)
+        # print("self.model.x", self.model.x[-300:])
+        # print(stop)
 
         # Input Trajectory Positions / Directions / Velocities / Styles
         for i in range(self.TimeSeries.keycount):
@@ -280,7 +284,7 @@ class SAMP_Demo:
             self.model.x.extend([rel_forward_dir[0], rel_forward_dir[2]])
             self.model.x.extend(self.StyleSeries.Values[sample.index])
 
-            # print("sample: ", sample.index, rel_pos, rel_forward_dir, self.StyleSeries.Values[sample.index])
+            print("Input Trajectory Positions / Directions / Velocities / Styles: ", sample.index, rel_pos, rel_forward_dir, self.StyleSeries.Values[sample.index])
         
         print("Pivot Trajectory Positions / Directions / Velocities / Styles :", len(self.model.x))
         # print("self.model.x", self.model.x)
@@ -327,9 +331,230 @@ class SAMP_Demo:
             # print("Geometry loop:", rel_pos, self.Geometry.Occupancies[i])
 
         print("Pivot Geometry:", len(self.model.x)) 
-        print("self.model.x", {i: val for i, val in enumerate(self.model.x)})
+        print("self.model.x", self.model.x) # {i: val for i, val in enumerate(self.model.x)}
+
+
+    def Read(self):
+        """
+        Read prediction from NN
+        """
+        assert self.timeline and self.timeline.is_playing()
+        # Update Past State
+        for i in range(self.TimeSeries.Pivot):
+            sample = self.TimeSeries.Samples[i]
+            mat = Gf.Matrix4f(1.0)
+            mat.SetTranslateOnly(self.RootSeries.Transformations[i+1].ExtractTranslation())
+
+            self.RootSeries.Transformations[i] = mat
+            # TODO: set up rotation
+            
+            for j in range(len(self.StyleSeries.Styles)):
+                self.StyleSeries.Values[i][j] = self.StyleSeries.Values[i + 1][j]
+            
+            for j in range(len(self.ContactSeries.Bones)):
+                self.ContactSeries.Values[i][j] = self.ContactSeries.Values[i + 1][j]
+            
+            self.GoalSeries.Transformations[i] = self.GoalSeries.Transformations[i + 1]
+
+            for j in range(len(self.GoalSeries.Actions)):
+                self.GoalSeries.Values[i][j] = self.GoalSeries.Values[i + 1][j]
 
         
+        root_mat = Gf.Matrix4f(self.RootSeries.Transformations[self.TimeSeries.Pivot])
+
+        # Read Posture
+        positions, forwards, upwards, velocities = [], [], [], []
+        for i in range(len(self.actor.Bones)):
+            # load position
+            pos4f = Gf.Vec4f(self.model.read(), self.model.read(), self.model.read(), 1.0)
+            pos4f_r = pos4f # * root_mat
+            pos = Gf.Vec3f(pos4f_r[0], pos4f_r[1], pos4f_r[2])  
+            positions.append(pos)
+
+            # load forward
+            forward3f = Gf.Vec3f(self.model.read(), self.model.read(), self.model.read()).GetNormalized()
+            forward4f = Gf.Vec4f(forward3f[0], forward3f[1], forward3f[2], 1.0)
+            forward4f_r = forward4f # * root_mat
+            forward = Gf.Vec3f(forward4f_r[0], forward4f_r[1], forward4f_r[2])
+            forwards.append(forward)
+
+            # load upward
+            upward3f = Gf.Vec3f(self.model.read(), self.model.read(), self.model.read()).GetNormalized()
+            upward4f = Gf.Vec4f(upward3f[0], upward3f[1], upward3f[2], 1.0)
+            upward4f_r = upward4f # * root_mat
+            upward = Gf.Vec3f(upward4f_r[0], upward4f_r[1], upward4f_r[2])
+            upwards.append(upward)
+
+            # load velocity
+            v4f = Gf.Vec4f(self.model.read(), self.model.read(), self.model.read(), 1.0)
+            v4f_r = v4f # * root_mat
+            v = Gf.Vec3f(v4f_r[0], v4f_r[1], v4f_r[2])
+            velocities.append(v)
+
+            # FIXME: lerp position
+            # positions.append(Gf.Lerp(0.5, self.actor.Bones[i].))
+
+        # Read Inverse Pose
+        for i in range(len(self.actor.Bones)):
+            pose_prediction = Gf.Vec4f(self.model.read(), self.model.read(), self.model.read(), 1.0)
+
+        # Read Future Trajectory
+        for i in range(self.TimeSeries.keycount):
+            sample = self.TimeSeries.Samples[i * self.TimeSeries.Resolution]
+
+            # load position
+            pos4f = Gf.Vec4f(self.model.read(), 0, self.model.read(), 1.0)
+            pos4f_r = pos4f * root_mat 
+            pos = Gf.Vec3f(pos4f_r[0], pos4f_r[1], pos4f_r[2])
+
+            # print(" Read Future Trajectory: ", i, pos4f)
+
+            # load direction
+            dir3f = Gf.Vec3f(self.model.read(), 0, self.model.read()).GetNormalized()
+            dir4f = Gf.Vec4f(dir3f[0], dir3f[1], dir3f[2], 1.0)
+            dir4f_r = dir4f * root_mat
+            dir = Gf.Vec3f(dir4f_r[0], dir4f_r[1], dir4f_r[2])
+
+            styles = [max(0, min(self.model.read(), 1)) for _ in range(len(self.StyleSeries.Styles))]
+
+            # M: edit future only
+            if i >= self.TimeSeries.Pivot // self.TimeSeries.Resolution:
+                mat = Gf.Matrix4f(1.0)
+                mat.SetTranslateOnly(pos)
+
+                # TODO: set direction
+
+                self.RootSeries.Transformations[sample.index] = mat
+                self.StyleSeries.Values[sample.index] = styles
+
+                if i >= 6:
+                    pass
+        
+        # Read Future Contacts
+        contacts = [self.model.read() for _ in range(len(self.ContactSeries.Bones))]
 
 
+        # Read Inverse Trajectory
+        for i in range(self.TimeSeries.keycount):
+            # print("Read Inverse Trajectory i", i)
+            sample = self.TimeSeries.Samples[i * self.TimeSeries.Resolution]
+            goal = self.GoalSeries.Transformations[self.TimeSeries.Pivot]
+            goal[3][1] = 0 # keep on floor
+            
+            # load position
+            pos4f = Gf.Vec4f(self.model.read(), 0, self.model.read(), 1.0)
+            pos4f_r = pos4f * goal
+            pos = Gf.Vec3f(pos4f_r[0], pos4f_r[1], pos4f_r[2])
+
+            # print("new pos", pos4f, pos)
+            # load direction
+            dir3f = Gf.Vec3f(self.model.read(), 0, self.model.read()).GetNormalized()
+            dir4f = Gf.Vec4f(dir3f[0], dir3f[1], dir3f[2], 1.0)
+            dir4f_r = dir4f * goal
+            dir = Gf.Vec3f(dir4f_r[0], dir4f_r[1], dir4f_r[2])
+
+            # TODO:
+
+            if i > self.TimeSeries.Pivot // self.TimeSeries.Resolution:
+                pivot = self.RootSeries.Transformations[sample.index]
+                pivot[3][1] = 0
+                reference = self.GoalSeries.Transformations[sample.index]
+                reference[3][1] = 0
+
+                pivot_pos = pivot.ExtractTranslation()
+                reference_pos = reference.ExtractTranslation()
+
+                # distance2 = (pivot_pos[0] - reference_pos[0])**2 +  (pivot_pos[1] - reference_pos[1])**2 +  (pivot_pos[2] - reference_pos[2])**2
+                # weight = ((i - 6)/ 7)**(distance2 * 100)
+
+                mat = Gf.Matrix4f(1.0)
+                mat.SetTranslateOnly(pos)
+               
+                # TODO: set direction
+                self.RootSeries.Transformations[sample.index] = mat
+
+                # if (i >= TimeSeries.PivotKey)
+
+        # Read and Correct Goals
+        for i in range(self.TimeSeries.keycount):
+            sample = self.TimeSeries.Samples[i * self.TimeSeries.Resolution]
+            weight = ((sample.index + 1) /  len(self.TimeSeries.Samples))**2
+            
+            # load position
+            pos4f = Gf.Vec4f(self.model.read(), self.model.read(), self.model.read(), 1.0)
+            pos4f_r = pos4f * root_mat
+            pos = Gf.Vec3f(pos4f_r[0], pos4f_r[1], pos4f_r[2])
+
+            # load direction
+            dir3f = Gf.Vec3f(self.model.read(), self.model.read(), self.model.read()).GetNormalized()
+            dir4f = Gf.Vec4f(dir3f[0], dir3f[1], dir3f[2], 1.0)
+            dir4f_r = dir4f * root_mat
+            dir = Gf.Vec3f(dir4f_r[0], dir4f_r[1], dir4f_r[2])
+  
+            actions = [max(0, min(self.model.read(), 1)) for _ in range(len(self.GoalSeries.Actions))]
+            
+            # FIXME: interpolate
+
+        
+            mat = Gf.Matrix4f(1.0)
+            mat.SetTranslateOnly(pos)
+            self.GoalSeries.Transformations[sample.index] 
+
+            self.GoalSeries.Values[sample.index] = actions
+
+
+        # Interpolate Current to Future Trajectory
+        for i in range(len(self.TimeSeries.Samples)):
+            sample  = self.TimeSeries.Samples[i]
+            prevSample = self.TimeSeries.Samples[ i // self.TimeSeries.Resolution * self.TimeSeries.Resolution]
+            nextSample = self.TimeSeries.Samples[min((i // self.TimeSeries.Resolution + 1) * self.TimeSeries.Resolution, len(self.TimeSeries.Samples) - 1)]
+            
+            # print(("nextSample of: ", i, " is ", nextSample.index)) 
+            weight = (i % self.TimeSeries.Resolution) / self.TimeSeries.Resolution
+            lerp_pos = Gf.Lerp(weight, self.RootSeries.Transformations[nextSample.index].ExtractTranslation(), self.RootSeries.Transformations[prevSample.index].ExtractTranslation())
+            print("Interpolate Current to Future Trajectory lerp_pos", i, lerp_pos)
+
+            mat = Gf.Matrix4f(1.0)
+            mat.SetTranslateOnly(lerp_pos)
+            # self.RootSeries.Transformations[sample.index] = mat
+
+            # TODO: set rotation
+
+            self.GoalSeries.Transformations[sample.index] = self.GoalSeries.Transformations[nextSample.index] 
+            self.StyleSeries.Values[i] = self.StyleSeries.Values[nextSample.index].copy()
+            self.GoalSeries.Values[i]= self.GoalSeries.Values[nextSample.index].copy()
+
+        # print("read pivot", self.model.pivot)
+
+
+        # Assign Posture
+        new_root_mat = self.RootSeries.Transformations[self.TimeSeries.Pivot]
+        new_pos = new_root_mat.ExtractTranslation()
+        new_rot = new_root_mat.ExtractRotationQuat()
+        t = carb.Float3(new_pos[0], new_pos[1],new_pos[2])
+        q = carb.Float4(new_rot.imaginary[0], new_rot.imaginary[1], new_rot.imaginary[2], new_rot.real)
+        self.character.set_world_transform(t, q)
+
+        print("new_pos new_rot", t, q)
+
+        # print("positions, forwards, upwards, velocities", positions, forwards, upwards, velocities)
+        trans, quats = set_pose(positions, forwards, upwards, velocities)
+        
+        # set pose
+        for jj, t in enumerate(trans):
+            self.character.set_variable("poses", trans)
+            self.character.set_variable("rots", quats)
+
+        # set velocity
+        for i in range(len(velocities)):
+            v = velocities[i]
+            self.actor.Bones[i].velocity = [v[0], v[1], v[2]]
+
+
+    
+
+
+
+
+            
 

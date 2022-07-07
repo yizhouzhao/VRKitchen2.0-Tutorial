@@ -11,6 +11,8 @@ class Controller():
         self.s = False
         self.a = False
         self.d = False
+
+        self.scale = 0.1
         
     def handle_keyboard_event(self, event):
         if (
@@ -47,7 +49,7 @@ class Controller():
     def QueryMove(self):
         move = [0, 0, 0]
         if self.w:
-            move[2] += 1
+            move[2] += 1 
         if self.s:
             move[2] -= 1
         if self.a:
