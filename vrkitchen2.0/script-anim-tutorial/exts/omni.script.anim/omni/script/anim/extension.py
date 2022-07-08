@@ -49,10 +49,10 @@ class MyExtension(omni.ext.IExt):
     def on_click(self):
         carb.log_warn("Script Animation Tutorial")
 
-        # setup subscriptions:
-        self._setup_callbacks()
+        # # setup subscriptions:
+        # self._setup_callbacks()
 
-        self._enable_tensor_api()
+        # self._enable_tensor_api()
 
 
         
@@ -142,15 +142,15 @@ class MyExtension(omni.ext.IExt):
             1. the tensor API is enabled, and
             2. when the simulation data is ready for the user to setup views using the tensor API.
         """
-        sim = tensorApi.create_simulation_view("numpy")
-        sim.set_subspace_roots("/World/*")
+        sim = omni.physics.tensors.create_simulation_view("numpy")
+        sim.set_subspace_roots("/World/envs/*")
 
-        self.characters = sim.create_articulation_view("/World/envs/*/Cube")
-
-        self.cubes = sim.create_rigid_body_view("/World/envs/*/Cube")
+        self.characters = sim.create_articulation_view("/World/envs/*/franka")
+        print("characters?", self.characters.get_dof_positions())
+        # self.cubes = sim.create_rigid_body_view("/World/envs/*/Cube")
 
         # self.hands = sim.create_rigid_body_view("/World/biped_demo/Body_Mesh")
-        print("cubes? ", self.cubes.get_transforms())
+        # print("cubes? ", self.cubes.get_transforms())
 
     
     def on_physics_step(self, dt):

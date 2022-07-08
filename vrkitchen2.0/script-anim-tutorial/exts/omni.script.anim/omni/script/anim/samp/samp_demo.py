@@ -104,8 +104,9 @@ class SAMP_Demo:
         root_mat = Gf.Matrix4f(root_mat)
         self.Geometry.Pivot = Gf.Matrix4f(root_mat)
 
+
         for i in range(len(self.TimeSeries.Samples)):
-            self.RootSeries.Transformations[i] = Gf.Matrix4f(root_mat)
+            self.RootSeries.Transformations[i] = Gf.Matrix4f(Gf.Matrix4f(root_mat))
         
             if self.StyleSeries.Styles:
                 self.StyleSeries.Values[i][0] = 1
@@ -113,7 +114,7 @@ class SAMP_Demo:
             if self.GoalSeries.Actions:
                 self.GoalSeries.Values[i][0] = 1  
 
-            self.GoalSeries.Transformations[i] = Gf.Matrix4f(root_mat)
+            self.GoalSeries.Transformations[i] = Gf.Matrix4f(Gf.Matrix4f(root_mat))
             self.Geometry.References.append(root_mat.ExtractTranslation())
     
         # PosePrediction = new Vector3[Actor.Bones.Length];
@@ -137,7 +138,7 @@ class SAMP_Demo:
             await omni.kit.app.get_app().next_update_async()
             await omni.kit.app.get_app().next_update_async()
 
-            for time in range(100):
+            for time in range(200):
                 self.timeline.forward_one_frame()
                 current_frame_code = self.timeline.get_current_time() * self.stage.GetTimeCodesPerSecond()
                 print("time: ", self.stage.GetTimeCodesPerSecond(), current_frame_code)
@@ -180,7 +181,7 @@ class SAMP_Demo:
             print("ApplyDynamicGoal:  TimeSeries.Pivot", self.TimeSeries.Pivot)
 
         move_val = self.controlloer.QueryMove()
-        turn_val = 0
+        turn_val = self.controlloer.QueryTurn()
         print(("move_val, turn_val: ", move_val, turn_val))
 
         root_mat = Gf.Matrix4f(self.RootSeries.Transformations[self.TimeSeries.Pivot])
@@ -197,19 +198,39 @@ class SAMP_Demo:
         positions_blend = [Gf.Vec3f(0.0)] * len_sample
         directions_blend = [Gf.Vec3f(0.0)]  * len_sample
 
+        # get move direction
+        move4f = Gf.Vec4f(move[0], move[1], move[2], 1.0)
+
+        # get root forward direction
+        root_forward4f = Gf.Vec4f(root[2][0], root[2][1], root[2][2], 1.0)
+
+
         time_metric = 2.0
         for i in range(len_sample):
             weight = ((i + 1.0) / len_sample) ** 0.5
             bias_pos = 1.0 - (1.0 - weight) ** 0.75
             bias_dir = 1.0 - (1.0 - weight) ** 0.75
-            directions_blend = Gf.Vec3f(-1, 0, 0) # ????????????????
+
+            # get turning rotation
+            rotation = Gf.Rotation(Gf.Vec3d(0, 1, 0), bias_dir * turn)
+            mat_w_rotation = Gf.Matrix4f(rotation, Gf.Vec3f(0))
+
+            # direction_blend_4f = root_forward4f * mat_w_rotation
+            # directions_blend[i] = Gf.Vec3f(direction_blend_4f[0], direction_blend_4f[1], direction_blend_4f[2])
+            
+            move_w_rot_4f = move4f * mat_w_rotation
+            move_w_rot = Gf.Vec3f(move_w_rot_4f[0], move_w_rot_4f[1], move_w_rot_4f[2])
+
+            print(turn, "direction blend: ", directions_blend[i], "root_forward4d: ", root_forward4f,  "move_w_rot:", move_w_rot)
+
+
             if i == 0:
                 v1 = self.GoalSeries.Transformations[i + 1].ExtractTranslation() - self.GoalSeries.Transformations[i].ExtractTranslation()
-                v2 = time_metric / (len_sample - 1) * move
+                v2 = time_metric / (len_sample - 1) * move_w_rot
                 positions_blend[i] = root.ExtractTranslation() + Gf.Lerp(bias_pos, v1, v2)
             else:
                 v1 = self.GoalSeries.Transformations[i].ExtractTranslation() - self.GoalSeries.Transformations[i - 1].ExtractTranslation()
-                v2 = time_metric / (len_sample - 1) * move
+                v2 = time_metric / (len_sample - 1) * move_w_rot
                 positions_blend[i] = positions_blend[i - 1] + Gf.Lerp(bias_pos, v1, v2)
 
             # print("positions_blend: ", move, positions_blend)
@@ -228,7 +249,7 @@ class SAMP_Demo:
         assert self.timeline and self.timeline.is_playing()
         root_mat = Gf.Matrix4f(self.RootSeries.Transformations[self.TimeSeries.Pivot])
 
-        print("root_mat", root_mat)
+        # print("root_mat", root_mat)
         
         # control
         self.UserControl = self.controlloer.PoolUserControl()
@@ -260,7 +281,7 @@ class SAMP_Demo:
 
             # print("bone velocity: ", bone.velocity)
 
-        print("Pivot Bone Positions / Velocities :", len(self.model.x))
+        # print("Pivot Bone Positions / Velocities :", len(self.model.x))
 
         # Input Inverse Bone Positions
         for i, joint in enumerate(joint2mat):
@@ -268,7 +289,7 @@ class SAMP_Demo:
             rel_pos = (joint2mat[joint] * root_series_transform_last.GetInverse()).ExtractTranslation()
             self.model.x.extend([rel_pos[0], rel_pos[1], rel_pos[2]])
 
-        print("Pivot Inverse Bone Positions :", len(self.model.x))
+        # print("Pivot Inverse Bone Positions :", len(self.model.x))
         # print("self.model.x", self.model.x)
         # print("self.model.x", self.model.x[-300:])
         # print(stop)
@@ -284,15 +305,15 @@ class SAMP_Demo:
             self.model.x.extend([rel_forward_dir[0], rel_forward_dir[2]])
             self.model.x.extend(self.StyleSeries.Values[sample.index])
 
-            print("Input Trajectory Positions / Directions / Velocities / Styles: ", sample.index, rel_pos, rel_forward_dir, self.StyleSeries.Values[sample.index])
+            # print("Input Trajectory Positions / Directions / Velocities / Styles: ", sample.index, rel_pos, rel_forward_dir, self.StyleSeries.Values[sample.index])
         
-        print("Pivot Trajectory Positions / Directions / Velocities / Styles :", len(self.model.x))
+        # print("Pivot Trajectory Positions / Directions / Velocities / Styles :", len(self.model.x))
         # print("self.model.x", self.model.x)
         
         # Input Contacts
         self.model.x.extend(self.ContactSeries.Values[self.TimeSeries.Pivot])
 
-        print("Pivot Inverse Input Contacts :", len(self.model.x))
+        # print("Pivot Inverse Input Contacts :", len(self.model.x))
         # print("self.model.x", self.model.x)
 
         # Input Inverse Trajectory Positions 
@@ -305,7 +326,7 @@ class SAMP_Demo:
             self.model.x.extend([rel_pos[0], rel_pos[2]])
             self.model.x.extend([rel_forward_dir[0], rel_forward_dir[2]])
 
-        print("Pivot Inverse Trajectory Positions :", len(self.model.x))
+        # print("Pivot Inverse Trajectory Positions :", len(self.model.x))
         # print("self.model.x", self.model.x)
 
         # Input Goals
@@ -318,7 +339,7 @@ class SAMP_Demo:
             self.model.x.extend([rel_forward_dir[0], rel_forward_dir[1], rel_forward_dir[2]])
             self.model.x.extend(self.GoalSeries.Values[sample.index])
 
-        print("Pivot Goals:", len(self.model.x)) 
+        # print("Pivot Goals:", len(self.model.x)) 
         # print("self.model.x", self.model.x)
 
         # Input Geometry
@@ -330,8 +351,8 @@ class SAMP_Demo:
 
             # print("Geometry loop:", rel_pos, self.Geometry.Occupancies[i])
 
-        print("Pivot Geometry:", len(self.model.x)) 
-        print("self.model.x", self.model.x) # {i: val for i, val in enumerate(self.model.x)}
+        # print("Pivot Geometry:", len(self.model.x)) 
+        # print("self.model.x", self.model.x) # {i: val for i, val in enumerate(self.model.x)}
 
 
     def Read(self):
@@ -436,7 +457,7 @@ class SAMP_Demo:
 
         # Read Inverse Trajectory
         for i in range(self.TimeSeries.keycount):
-            # print("Read Inverse Trajectory i", i)
+           
             sample = self.TimeSeries.Samples[i * self.TimeSeries.Resolution]
             goal = self.GoalSeries.Transformations[self.TimeSeries.Pivot]
             goal[3][1] = 0 # keep on floor
@@ -447,6 +468,7 @@ class SAMP_Demo:
             pos = Gf.Vec3f(pos4f_r[0], pos4f_r[1], pos4f_r[2])
 
             # print("new pos", pos4f, pos)
+            print("Read Inverse Trajectory i", i, goal.ExtractTranslation())
             # load direction
             dir3f = Gf.Vec3f(self.model.read(), 0, self.model.read()).GetNormalized()
             dir4f = Gf.Vec4f(dir3f[0], dir3f[1], dir3f[2], 1.0)
@@ -512,7 +534,7 @@ class SAMP_Demo:
             # print(("nextSample of: ", i, " is ", nextSample.index)) 
             weight = (i % self.TimeSeries.Resolution) / self.TimeSeries.Resolution
             lerp_pos = Gf.Lerp(weight, self.RootSeries.Transformations[nextSample.index].ExtractTranslation(), self.RootSeries.Transformations[prevSample.index].ExtractTranslation())
-            print("Interpolate Current to Future Trajectory lerp_pos", i, lerp_pos)
+            # print("Interpolate Current to Future Trajectory lerp_pos", i, lerp_pos)
 
             mat = Gf.Matrix4f(1.0)
             mat.SetTranslateOnly(lerp_pos)
@@ -531,11 +553,13 @@ class SAMP_Demo:
         new_root_mat = self.RootSeries.Transformations[self.TimeSeries.Pivot]
         new_pos = new_root_mat.ExtractTranslation()
         new_rot = new_root_mat.ExtractRotationQuat()
+
+        #　print("new_root_mat:", new_root_mat)
         t = carb.Float3(new_pos[0], new_pos[1],new_pos[2])
         q = carb.Float4(new_rot.imaginary[0], new_rot.imaginary[1], new_rot.imaginary[2], new_rot.real)
         self.character.set_world_transform(t, q)
 
-        print("new_pos new_rot", t, q)
+        # print("new_pos new_rot", t, q)
 
         # print("positions, forwards, upwards, velocities", positions, forwards, upwards, velocities)
         trans, quats = set_pose(positions, forwards, upwards, velocities)

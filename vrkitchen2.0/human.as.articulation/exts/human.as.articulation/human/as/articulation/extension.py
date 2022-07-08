@@ -1,9 +1,14 @@
+import asyncio
 import omni.ext
 import omni.ui as ui
 
 import omni
 import pxr 
 import carb
+
+import time
+import numpy as np
+
 
 # Any class derived from `omni.ext.IExt` in top level module (defined in `python.modules` of `extension.toml`) will be
 # instantiated when extension gets enabled and `on_startup(ext_id)` will be called. Later when extension gets disabled
@@ -14,6 +19,10 @@ class MyExtension(omni.ext.IExt):
     def on_startup(self, ext_id):
         print("[human.as.articulation] MyExtension startup")
 
+        self._is_stopped = True
+        self._tensor_started = False
+        self.dt_acc = 1.0
+
         self._window = ui.Window("human.as.articulation", width=300, height=300)
         with self._window.frame:
             with ui.VStack():
@@ -21,7 +30,9 @@ class MyExtension(omni.ext.IExt):
                 ui.Button("humanoid test 2", clicked_fn=self.test_smpl)
                 ui.Button("Joint test 3", clicked_fn=self.test_joint)
                 ui.Button("Joint test runtime 4", clicked_fn=self.test_joint_runtime)
-                ui.Button("Test warp", clicked_fn=self.test_warp)
+                ui.Button("Test RL", clicked_fn=self.test_rl)
+                ui.Button("Test RL 2", clicked_fn=self.test_rl2)
+                
                 
 
     def on_shutdown(self):
@@ -176,13 +187,161 @@ class MyExtension(omni.ext.IExt):
        
         
         
-    def test_warp(self):
-        import numpy as np
+    def test_rl(self):
+        print("test RL")
+        # from stable_baselines3 import PPO
 
-        import warp as wp
-        from pxr import Usd, UsdGeom
+        from .rl.env import JetBotEnv
+        import math
 
-        import os
+        # self._world_settings = {"physics_dt": 1.0 / 60.0, "stage_units_in_meters": 1.0, "rendering_dt": 1.0 / 60.0}
+        # asyncio.ensure_future(self.load_world_async())
 
-        wp.init()
-        print(wp.config.version)
+        # my_env = JetBotEnv()
+
+    def test_rl2(self):
+        print("test rl20")
+
+       
+
+    
+        timeline = omni.timeline.get_timeline_interface()
+        stage = omni.usd.get_context().get_stage()
+
+
+        self._setup_callbacks()
+        timeline.set_looping(True)
+        timeline.play()
+
+    
+
+# ----------------------------------------------------time----------------------------------------------
+
+    def _setup_callbacks(self):
+        stream = omni.timeline.get_timeline_interface().get_timeline_event_stream()
+        self._timeline_sub = stream.create_subscription_to_pop(self._on_timeline_event)
+        # subscribe to Physics updates:
+        self._physics_update_sub = omni.physx.get_physx_interface().subscribe_physics_step_events(self._on_physics_step)
+        events = omni.physx.get_physx_interface().get_simulation_event_stream_v2()
+        self._simulation_event_subscription = events.create_subscription_to_pop(self.on_simulation_event)
+
+    def _on_timeline_event(self, e):
+        if e.type == int(omni.timeline.TimelineEventType.STOP):
+            self._is_stopped = True
+            self._tensor_started = False
+
+            # !!!
+            self._simulation_event_subscription = None
+            self._physics_update_sub = None
+            self._timeline_sub = None
+        
+        if e.type == int(omni.timeline.TimelineEventType.PLAY):
+            self._is_stopped = False
+    
+    def _on_physics_step(self, dt):
+        if not self._can_callback_physics_step():
+            return
+
+        # call user implementation
+        self.on_physics_step(dt)
+
+    def on_physics_step(self, dt):
+        """
+        This method is called on each physics step callback, and the first callback is issued
+        after the on_tensor_start method is called if the tensor API is enabled.
+        """
+        from omni.isaac.core.utils.types import ArticulationAction
+
+        # print("dt", dt)
+        action = np.random.uniform(-1, 1, (len(self.robot_indices), 2)) * 20
+        self.robots.set_joint_velocity_targets(action, self.robot_indices)
+
+        self.dt_acc -= dt
+        if self.dt_acc < 0:
+            print("1 second passed")
+            self.dt_acc = 2.0
+            
+            self.robots._physics_view.set_dof_positions(self.robot_original_position, self.robot_indices)
+            self.robots._physics_view.set_dof_position_targets(self.robot_original_position, self.robot_indices)
+            # print("reset to position: ", self.robots.get_dof_positions())
+
+            # self.robots.set_world_poses(self.xform_original_transform[0], self.xform_original_transform[1])
+            pos = [[0.5 * i, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0] for i in range(len(self.robot_indices))]
+            self.robots._physics_view.set_root_transforms(pos, self.robot_indices)
+            # self.envs.set_world_poses(self.env_original_position[0], self.env_original_position[1])
+        # self.jetbot.apply_wheel_actions(ArticulationAction(joint_velocities=action * 10.0))
+        
+
+    def on_simulation_event(self, e):
+        """
+        This method is called on simulation events. See omni.physx.bindings._physx.SimulationEvent.
+        """
+        pass
+        # print("on_simulation_event", e)
+        
+    def _can_callback_physics_step(self) -> bool:
+        if self._is_stopped:
+            return False
+
+        if self._tensor_started:
+            return True
+
+        import omni.isaac.core.utils.numpy as np_utils
+        from omni.isaac.core.prims.xform_prim_view import XFormPrimView
+        from omni.isaac.core.robots.robot_view import RobotView
+
+        # self.envs = XFormPrimView("/World/envs/env*/jetbot")
+        
+        # self.env_original_position = self.envs.get_world_poses()
+        # print("envs poses", self.env_original_position)
+
+        self._backend_utils = np_utils
+
+
+        # indices = self._backend_utils.resolve_indices(indices, self.count, self._device)
+        # joint_indices = self._backend_utils.resolve_indices(joint_indices, self.num_dof, self._device)
+           
+        
+        # new_dof_pos[self._backend_utils.expand_dims(indices, 1), joint_indices] = self._backend_utils.move_data(
+        #     positions, device=self._device
+        # )
+
+        # self._tensor_started = True
+        # sim = omni.physics.tensors.create_simulation_view("numpy")
+        # sim.set_subspace_roots("/World/envs/*")
+
+        self.robots = RobotView("/World/envs/*/jetbot") #sim.create_articulation_view("/World/envs/*/jetbot")
+        self.robot_indices = np.arange(self.robots.count, dtype=np.int32)
+        # print("robots?", self.robots.get_dof_positions())
+        self.robots.initialize()
+        self.robot_original_position = self._backend_utils.clone_tensor(self.robots._physics_view.get_dof_positions())
+        self.xform_original_transform = self.robots.get_world_poses()
+
+
+
+
+        # from omni.isaac.wheeled_robots.robots import WheeledRobot
+        # from omni.isaac.core.utils.nucleus import get_assets_root_path
+        
+
+        # assets_root_path = get_assets_root_path()
+        # if assets_root_path is None:
+        #     carb.log_error("Could not find Isaac Sim assets folder")
+        #     return
+
+        # jetbot_asset_path = assets_root_path + "/Isaac/Robots/Jetbot/jetbot.usd"
+
+        # self.jetbot = WheeledRobot(
+        #     prim_path="/World/jetbot",
+        #     name="my_jetbot",
+        #     wheel_dof_names=["left_wheel_joint", "right_wheel_joint"],
+        #     create_robot=False,
+        #     usd_path=jetbot_asset_path,
+        #     position=np.array([0, 0.0, 0.020]),
+        #     orientation=np.array([1.0, 0.0, 0.0, 0.0]),
+        # )     
+
+        # self.jetbot.initialize()
+
+        return True
+            

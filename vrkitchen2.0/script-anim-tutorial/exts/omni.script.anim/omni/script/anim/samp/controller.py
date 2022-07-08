@@ -11,8 +11,10 @@ class Controller():
         self.s = False
         self.a = False
         self.d = False
+        self.q = False
+        self.e = False
 
-        self.scale = 0.1
+        # self.scale = 0.1
         
     def handle_keyboard_event(self, event):
         if (
@@ -28,6 +30,10 @@ class Controller():
                 self.a = True
             if event.input == carb.input.KeyboardInput.D:
                 self.d = True
+            if event.input == carb.input.KeyboardInput.Q:
+                self.q = True
+            if event.input == carb.input.KeyboardInput.E:
+                self.e = True
 
         if event.type == carb.input.KeyboardEventType.KEY_RELEASE:
             # print("event release", event.input)
@@ -39,6 +45,11 @@ class Controller():
                 self.a = False
             if event.input == carb.input.KeyboardInput.D:
                 self.d = False
+            if event.input == carb.input.KeyboardInput.Q:
+                self.q = False
+            if event.input == carb.input.KeyboardInput.E:
+                self.e = False
+
 
     def PoolUserControl(self):
         return self.user_control
@@ -58,4 +69,13 @@ class Controller():
             move[0] -= 1
 
         return move
+
+    def QueryTurn(self):
+        turn = 0
+        if self.q:
+            turn += 90
+        if self.e:
+            turn -= 90
+
+        return turn
         
