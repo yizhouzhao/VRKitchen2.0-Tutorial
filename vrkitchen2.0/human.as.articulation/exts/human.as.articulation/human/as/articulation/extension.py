@@ -308,16 +308,17 @@ class MyExtension(omni.ext.IExt):
         #     positions, device=self._device
         # )
 
-        # self._tensor_started = True
-        # sim = omni.physics.tensors.create_simulation_view("numpy")
+        self._tensor_started = True
+        sim = omni.physics.tensors.create_simulation_view("numpy")
         # sim.set_subspace_roots("/World/envs/*")
 
-        self.robots = RobotView("/World/envs/*/jetbot") #sim.create_articulation_view("/World/envs/*/jetbot")
+        self.robots =  RobotView("/World/envs/*/humanoid/torso") # sim.create_articulation_view("/World/envs/*/humanoid/torso") # 
         self.robot_indices = np.arange(self.robots.count, dtype=np.int32)
         # print("robots?", self.robots.get_dof_positions())
-        self.robots.initialize()
-        self.robot_original_position = self._backend_utils.clone_tensor(self.robots._physics_view.get_dof_positions())
+        # self.robots.initialize()
+        # self.robot_original_position = self._backend_utils.clone_tensor(self.robots._physics_view.get_dof_positions())
         self.xform_original_transform = self.robots.get_world_poses()
+        print("xform_original_transform: ", self.xform_original_transform)
 
 
 

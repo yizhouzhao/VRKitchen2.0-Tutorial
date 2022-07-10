@@ -1,4 +1,4 @@
-File system
+Tensor system
 --------------------------------------------------
 
 Package name ``omni.physics.tensors`` or ``omni.physx.tensors``
