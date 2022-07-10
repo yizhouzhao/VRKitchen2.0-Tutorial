@@ -250,6 +250,7 @@ class MyExtension(omni.ext.IExt):
         This method is called on each physics step callback, and the first callback is issued
         after the on_tensor_start method is called if the tensor API is enabled.
         """
+        return
         from omni.isaac.core.utils.types import ArticulationAction
 
         # print("dt", dt)
