@@ -9,6 +9,9 @@ import carb
 import time
 import numpy as np
 
+from .constants import *
+from .rl.humanoid_env import HumanoidEnv
+
 
 # Any class derived from `omni.ext.IExt` in top level module (defined in `python.modules` of `extension.toml`) will be
 # instantiated when extension gets enabled and `on_startup(ext_id)` will be called. Later when extension gets disabled
@@ -202,16 +205,13 @@ class MyExtension(omni.ext.IExt):
     def test_rl2(self):
         print("test rl20")
 
-       
-
-    
-        timeline = omni.timeline.get_timeline_interface()
+        self.timeline = omni.timeline.get_timeline_interface()
         stage = omni.usd.get_context().get_stage()
 
 
         self._setup_callbacks()
-        timeline.set_looping(True)
-        timeline.play()
+        self.timeline.set_looping(True)
+        self.timeline.play()
 
     
 
@@ -250,29 +250,17 @@ class MyExtension(omni.ext.IExt):
         This method is called on each physics step callback, and the first callback is issued
         after the on_tensor_start method is called if the tensor API is enabled.
         """
+        self.envs.step()
 
-        return 
-        from omni.isaac.core.utils.types import ArticulationAction
-
-        # print("dt", dt)
-        action = np.random.uniform(-1, 1, (len(self.robot_indices), 2)) * 20
-        self.robots.set_joint_velocity_targets(action, self.robot_indices)
 
         self.dt_acc -= dt
         if self.dt_acc < 0:
             print("1 second passed")
             self.dt_acc = 2.0
-            
-            self.robots._physics_view.set_dof_positions(self.robot_original_position, self.robot_indices)
-            self.robots._physics_view.set_dof_position_targets(self.robot_original_position, self.robot_indices)
-            # print("reset to position: ", self.robots.get_dof_positions())
+                        
+            self.envs.reset_idx([0])
+            self.timeline.pause()
 
-            # self.robots.set_world_poses(self.xform_original_transform[0], self.xform_original_transform[1])
-            pos = [[0.5 * i, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0] for i in range(len(self.robot_indices))]
-            self.robots._physics_view.set_root_transforms(pos, self.robot_indices)
-            # self.envs.set_world_poses(self.env_original_position[0], self.env_original_position[1])
-        # self.jetbot.apply_wheel_actions(ArticulationAction(joint_velocities=action * 10.0))
-        
 
     def on_simulation_event(self, e):
         """
@@ -289,62 +277,12 @@ class MyExtension(omni.ext.IExt):
             return True
 
         import omni.isaac.core.utils.numpy as np_utils
-        from omni.isaac.core.prims.xform_prim_view import XFormPrimView
-        from omni.isaac.core.robots.robot_view import RobotView
-
-        # self.envs = XFormPrimView("/World/envs/env*/jetbot")
-        
-        # self.env_original_position = self.envs.get_world_poses()
-        # print("envs poses", self.env_original_position)
-
         self._backend_utils = np_utils
 
-
-        # indices = self._backend_utils.resolve_indices(indices, self.count, self._device)
-        # joint_indices = self._backend_utils.resolve_indices(joint_indices, self.num_dof, self._device)
-           
-        
-        # new_dof_pos[self._backend_utils.expand_dims(indices, 1), joint_indices] = self._backend_utils.move_data(
-        #     positions, device=self._device
-        # )
-
         self._tensor_started = True
-        sim = omni.physics.tensors.create_simulation_view("numpy")
-        # sim.set_subspace_roots("/World/envs/*")
 
-        self.robots =  RobotView("/World/envs/*/humanoid/torso") # sim.create_articulation_view("/World/envs/*/humanoid/torso") # 
-        self.robot_indices = np.arange(self.robots.count, dtype=np.int32)
-        # print("robots?", self.robots.get_dof_positions())
-        # self.robots.initialize()
-        # self.robot_original_position = self._backend_utils.clone_tensor(self.robots._physics_view.get_dof_positions())
-        self.xform_original_transform = self.robots.get_world_poses()
-        print("xform_original_transform: ", self.xform_original_transform)
-
-
-
-
-        # from omni.isaac.wheeled_robots.robots import WheeledRobot
-        # from omni.isaac.core.utils.nucleus import get_assets_root_path
-        
-
-        # assets_root_path = get_assets_root_path()
-        # if assets_root_path is None:
-        #     carb.log_error("Could not find Isaac Sim assets folder")
-        #     return
-
-        # jetbot_asset_path = assets_root_path + "/Isaac/Robots/Jetbot/jetbot.usd"
-
-        # self.jetbot = WheeledRobot(
-        #     prim_path="/World/jetbot",
-        #     name="my_jetbot",
-        #     wheel_dof_names=["left_wheel_joint", "right_wheel_joint"],
-        #     create_robot=False,
-        #     usd_path=jetbot_asset_path,
-        #     position=np.array([0, 0.0, 0.020]),
-        #     orientation=np.array([1.0, 0.0, 0.0, 0.0]),
-        # )     
-
-        # self.jetbot.initialize()
+        # start env
+        self.envs = HumanoidEnv()
 
         return True
             
