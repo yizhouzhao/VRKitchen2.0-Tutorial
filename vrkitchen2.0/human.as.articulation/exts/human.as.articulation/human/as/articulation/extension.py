@@ -1,4 +1,5 @@
 import asyncio
+
 import omni.ext
 import omni.ui as ui
 
@@ -11,6 +12,8 @@ import numpy as np
 
 from .constants import *
 from .rl.humanoid_env import HumanoidEnv
+from .rl.utils import *
+from .rl.trainer import Trainer
 
 
 # Any class derived from `omni.ext.IExt` in top level module (defined in `python.modules` of `extension.toml`) will be
@@ -192,15 +195,9 @@ class MyExtension(omni.ext.IExt):
         
     def test_rl(self):
         print("test RL")
-        # from stable_baselines3 import PPO
 
-        from .rl.env import JetBotEnv
-        import math
+        from stable_baselines3 import SAC
 
-        # self._world_settings = {"physics_dt": 1.0 / 60.0, "stage_units_in_meters": 1.0, "rendering_dt": 1.0 / 60.0}
-        # asyncio.ensure_future(self.load_world_async())
-
-        # my_env = JetBotEnv()
 
     def test_rl2(self):
         print("test rl20")
@@ -208,12 +205,14 @@ class MyExtension(omni.ext.IExt):
         self.timeline = omni.timeline.get_timeline_interface()
         stage = omni.usd.get_context().get_stage()
 
+        # start env
+        self.env = HumanoidEnv()
+        self.trainer = Trainer(self.env)
 
         self._setup_callbacks()
         self.timeline.set_looping(True)
         self.timeline.play()
 
-    
 
 # ----------------------------------------------------time----------------------------------------------
 
@@ -245,22 +244,6 @@ class MyExtension(omni.ext.IExt):
         # call user implementation
         self.on_physics_step(dt)
 
-    def on_physics_step(self, dt):
-        """
-        This method is called on each physics step callback, and the first callback is issued
-        after the on_tensor_start method is called if the tensor API is enabled.
-        """
-        self.envs.step()
-
-
-        self.dt_acc -= dt
-        if self.dt_acc < 0:
-            print("1 second passed")
-            self.dt_acc = 2.0
-                        
-            self.envs.reset_idx([0])
-            self.timeline.pause()
-
 
     def on_simulation_event(self, e):
         """
@@ -276,13 +259,59 @@ class MyExtension(omni.ext.IExt):
         if self._tensor_started:
             return True
 
-        import omni.isaac.core.utils.numpy as np_utils
-        self._backend_utils = np_utils
 
         self._tensor_started = True
 
         # start env
-        self.envs = HumanoidEnv()
+        self.env.start()
 
         return True
+    
+    def on_physics_step(self, dt):
+        """
+        This method is called on each physics step callback, and the first callback is issued
+        after the on_tensor_start method is called if the tensor API is enabled.
+        """
+        # renew observation
+        old_obs_buf = self.env.obs_buf.clone()
+        
+        self.env.step()
+        self.env.compute_observations()
+
+        # new_obs_buf = self.env.obs_buf.clone()
+
+        reward, done = self.env.compute_reward()
+
+        if torch.isnan(old_obs_buf[:,0]).any():
+            self.timeline.pause()
+
+            async def stop_and_restart():
+
+                self.timeline.pause()
+                await asyncio.sleep(2.0)
+                self.timeline.stop()
+                await asyncio.sleep(1.0)
+                self.test_rl2()
+                
+
+            # asyncio.ensure_future(stop_and_restart())
+
+        # # need to reset
+        if torch.sum(done) >= 1:
+            env_ids = []
+            for i in range(len(done)):
+                if done[i] > 0:
+                    env_ids.append(i)
+
+            self.env.reset_idx(env_ids)
+
+            # self.env.robots.post_reset()
+
+        # self.dt_acc -= dt
+        # if self.dt_acc < 0:
+        #     print("1 second passed")
+        #     self.dt_acc = 2.0
+                        
+        #     #self.env.reset_idx([0])
+        #     self.timeline.pause()
             
