@@ -2,9 +2,9 @@ import numpy as np
 import torch
 import os
 
-from .utils import ReplayBuffer
-from .humanoid_env import HumanoidEnv
-from .SAC import SAC
+from rl.utils import ReplayBuffer
+from rl.humanoid_env import HumanoidEnv
+from rl.SAC import SAC
 
 class Trainer():
     def __init__(self, obs_dim, act_dim) -> None:

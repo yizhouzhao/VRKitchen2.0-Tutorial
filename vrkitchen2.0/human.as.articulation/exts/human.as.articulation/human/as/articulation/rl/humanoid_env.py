@@ -8,9 +8,9 @@ import omni
 from omni.isaac.core.robots.robot_view import RobotView
 from omni.isaac.core import World, SimulationContext
 
-from ..constants import humanoid_motor_effort
-from .torch_utils import *
-from .torch_jit_utils import *
+from constants import humanoid_motor_effort
+from rl.torch_utils import *
+from rl.torch_jit_utils import *
 
 class HumanoidEnv(gym.Env):
     def __init__(self, 
@@ -210,8 +210,8 @@ class HumanoidEnv(gym.Env):
         reset = torch.where(self.progress_buf >= 1000 - 1, torch.ones_like(self.reset_buf), reset)
         reset = torch.where(self.progress_buf >= 1000 - 1, torch.ones_like(self.reset_buf), reset)
         
-        if torch.isnan(self.obs_buf[:, 0]).any():
-            reset = torch.ones_like(self.reset_buf)
+        # if torch.isnan(self.obs_buf[:, 0]).any():
+        #     reset = torch.ones_like(self.reset_buf)
 
         # print("reset?", self.obs_buf[:, 0], reset)
         return total_reward, reset
@@ -223,7 +223,7 @@ class HumanoidEnv(gym.Env):
                 self.active_ids.append(key)
                 del self.reset_count_down[key]
 
-    def step(self, action = None):
+    def step(self, actions):
         """
         Step in RL
         """
@@ -233,15 +233,13 @@ class HumanoidEnv(gym.Env):
 
         # self.compute_active_ids()
         # take action
-        if action is None: # random policy
+        if actions is None: # random policy
             # if self.backend == "numpy":
             #     self.actions = 1.0 * np.random.uniform(-1, 1, (len(self.active_ids), len(humanoid_motor_effort)))
             # else: # torch
-            self.actions = 2 * torch.rand(len(self.num_envs), len(humanoid_motor_effort)) - 1
+            self.actions = 2 * torch.rand(self.num_envs, len(humanoid_motor_effort)) - 1
             self.actions = self.actions.to(self.device)
-        else:
-            self.actions = action
-        
+
         # print("actions", self.actions.shape, self.actions)
         self.actions = self.actions * self.motor_efforts 
         

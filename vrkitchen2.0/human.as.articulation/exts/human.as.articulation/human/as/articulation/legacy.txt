@@ -1,3 +1,5 @@
+    /home/yizhou/.local/share/ov/pkg/isaac_sim-2022.1.0/jupyter_notebook.sh
+    
     async def load_world_async(self):
         from omni.isaac.core.utils.stage import create_new_stage_async, update_stage_async
         from omni.isaac.core import World
