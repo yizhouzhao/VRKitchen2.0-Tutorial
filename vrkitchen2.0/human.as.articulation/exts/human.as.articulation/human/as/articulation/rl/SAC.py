@@ -143,6 +143,7 @@ class SAC(nn.Module):
         self.alpha_lr = alpha_lr
         self.alpha_beta = alpha_beta
 
+        self.device = device
         self.actor = Actor(state_dim, action_dim, actor_log_std_min, actor_log_std_max).to(device)
         self.critic = Critic(state_dim, action_dim).to(device)
         self.critic_target = copy.deepcopy(self.critic)

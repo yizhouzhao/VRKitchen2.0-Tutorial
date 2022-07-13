@@ -196,7 +196,7 @@ class MyExtension(omni.ext.IExt):
     def test_rl(self):
         print("test RL")
 
-        from stable_baselines3 import SAC
+        self.trainer = Trainer(54, 21)
 
 
     def test_rl2(self):
@@ -207,7 +207,7 @@ class MyExtension(omni.ext.IExt):
 
         # start env
         self.env = HumanoidEnv()
-        self.trainer = Trainer(self.env)
+
 
         self._setup_callbacks()
         self.timeline.set_looping(True)
@@ -272,16 +272,37 @@ class MyExtension(omni.ext.IExt):
         This method is called on each physics step callback, and the first callback is issued
         after the on_tensor_start method is called if the tensor API is enabled.
         """
+        # self.dt_acc -= dt
+        # if self.dt_acc > 0:
+        #     return 
+        
+        # print("0.2 second passed")
+        # self.dt_acc = 0.2
+
         # renew observation
         old_obs_buf = self.env.obs_buf.clone()
-        
-        self.env.step()
+        # print("old_obs_buf", old_obs_buf.shape)
+
+        action = self.trainer.sample_action(old_obs_buf)
+        # print("action", action.shape, action)
+
+        # print("step")
+        self.env.step(action)
         self.env.compute_observations()
 
-        # new_obs_buf = self.env.obs_buf.clone()
-
+        new_obs_buf = self.env.obs_buf.clone()
         reward, done = self.env.compute_reward()
 
+        # print("reward", reward.shape, "done", done.shape)
+        self.trainer.buf.add_batch(old_obs_buf, action, new_obs_buf, reward, done)
+        print("self.trainer.buf", self.trainer.buf.size)
+
+        # train
+        if self.trainer.buf.size > 50:
+            self.trainer.train_debug()
+
+
+        # handle bug
         if torch.isnan(old_obs_buf[:,0]).any():
             self.timeline.pause()
 
@@ -292,26 +313,35 @@ class MyExtension(omni.ext.IExt):
                 self.timeline.stop()
                 await asyncio.sleep(1.0)
                 self.test_rl2()
-                
 
             # asyncio.ensure_future(stop_and_restart())
 
-        # # need to reset
+        # need to reset
         if torch.sum(done) >= 1:
             env_ids = []
             for i in range(len(done)):
                 if done[i] > 0:
                     env_ids.append(i)
 
-            self.env.reset_idx(env_ids)
+            # self.env.reset_idx(env_ids)
+
+            for i in env_ids:
+                if i in self.env.active_ids:
+                    self.env.active_ids.remove(i)
+                    self.env.reset_count_down[i] = 10
+        
+        # update reset
+        now_reset_env_ids = []
+        for key in list(self.env.reset_count_down.keys()):
+            self.env.reset_count_down[key] -= 1
+            if self.env.reset_count_down[key] <= 0:
+                self.env.active_ids.append(key)
+                now_reset_env_ids.append(key)
+                del self.env.reset_count_down[key]
+
+        if len(now_reset_env_ids):
+            self.env.reset_idx(now_reset_env_ids)
 
             # self.env.robots.post_reset()
 
-        # self.dt_acc -= dt
-        # if self.dt_acc < 0:
-        #     print("1 second passed")
-        #     self.dt_acc = 2.0
-                        
-        #     #self.env.reset_idx([0])
-        #     self.timeline.pause()
-            
+

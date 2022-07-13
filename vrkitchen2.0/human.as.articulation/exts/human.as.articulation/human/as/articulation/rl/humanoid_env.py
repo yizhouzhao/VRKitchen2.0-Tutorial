@@ -88,9 +88,15 @@ class HumanoidEnv(gym.Env):
 
         # joint motor effort 
         self.motor_efforts = self.robots._backend_utils.convert(humanoid_motor_effort, self.device)
+        self.robots.set_max_efforts(self.motor_efforts.expand(self.num_envs, -1))
+        # self.robots._physics_view.set_dof_max_velocities(100 * torch.ones((self.num_envs, 21)), self.robot_indices)
+        
+        self.robots.set_solver_position_iteration_counts(32 * torch.ones(self.num_envs))
+        self.robots.set_solver_velocity_iteration_counts(32 * torch.ones(self.num_envs))
+        
 
         # direction
-        self.up_axis_idx = 1 # Y = 1, Z = 2
+        self.up_axis_idx = 1 # Y = 1, Z = 2 
         self.up_vec = to_torch(get_axis_params(1., self.up_axis_idx), device=self.device).repeat((self.num_envs, 1))
         self.heading_vec = to_torch([1, 0, 0], device=self.device).repeat((self.num_envs, 1))
         self.start_rotation = torch.tensor([-0.5, -0.5, -0.5, 0.5], device=self.device)
@@ -98,7 +104,7 @@ class HumanoidEnv(gym.Env):
         self.start_rotation = self.start_rotation.repeat((self.num_envs, 1))
 
         # print("inv_start_rot", quat_mul(self.start_rotation, self.inv_start_rot))
-
+        
 
         self.basis_vec0 = self.heading_vec.clone()
         self.basis_vec1 = self.up_vec.clone()
@@ -225,14 +231,14 @@ class HumanoidEnv(gym.Env):
         self.progress_buf += 1
         # self.randomize_buf += 1
 
-        self.compute_active_ids()
+        # self.compute_active_ids()
         # take action
         if action is None: # random policy
-            if self.backend == "numpy":
-                self.actions = 1.0 * np.random.uniform(-1, 1, (len(self.active_ids), len(humanoid_motor_effort)))
-            else: # torch
-                self.actions = 2 * torch.rand(len(self.active_ids), len(humanoid_motor_effort)) - 1
-                self.actions = self.actions.to(self.device)
+            # if self.backend == "numpy":
+            #     self.actions = 1.0 * np.random.uniform(-1, 1, (len(self.active_ids), len(humanoid_motor_effort)))
+            # else: # torch
+            self.actions = 2 * torch.rand(len(self.num_envs), len(humanoid_motor_effort)) - 1
+            self.actions = self.actions.to(self.device)
         else:
             self.actions = action
         
@@ -242,7 +248,7 @@ class HumanoidEnv(gym.Env):
         # print("active_ids", self.active_ids) 
         # print("action", self.actions)
         if len(self.active_ids) > 0:
-            self.robots.set_joint_efforts(efforts = self.actions, indices = self.active_ids)
+            self.robots.set_joint_efforts(efforts = self.actions[self.active_ids, ...], indices = self.active_ids)
         # if len(self.reset_count_down) > 0:
         #     self.robots.set_joint_efforts(efforts = torch.zeros((len(self.reset_count_down), 21)), indices = list(self.reset_count_down.keys()))
 
@@ -263,22 +269,24 @@ class HumanoidEnv(gym.Env):
 
         self.robots.set_world_poses(self.robots._default_state.positions[env_ids,...], self.robots._default_state.orientations[env_ids,...], indices=env_ids)
         self.robots.set_joint_positions(self.robots._default_joints_state.positions[env_ids,...], indices=env_ids)
+        # self.robots.set_joint_position_targets(self.robots._default_joints_state.positions[env_ids,...], indices=env_ids)
+        
         
         self.robots.set_joint_velocities(self.robots._default_joints_state.velocities[env_ids,...], indices=env_ids)
-        self.robots.set_joint_velocity_targets(self.robots._default_joints_state.velocities[env_ids,...], indices=env_ids)
+        # self.robots.set_joint_velocity_targets(self.robots._default_joints_state.velocities[env_ids,...], indices=env_ids)
         
         self.robots.set_joint_efforts(self.robots._default_joints_state.efforts[env_ids,...], indices=env_ids)
         self.robots.set_gains(kps=self.robots._default_kps[env_ids,...], kds=self.robots._default_kds[env_ids,...], indices=env_ids)
         
-
+        # temp_damping = self.robots._physics_view.get_dof_dampings()
+        # print("temp_damping", temp_damping)
+        # self.robots._physics_view.set_dof_dampings(10 * temp_damping[env_ids,...], self.robot_indices[env_ids,...])
+        
         # self.robots.set_world_poses(self.robot_states[0][env_ids,...], self.robot_states[1][env_ids,...], self.robot_indices[env_ids,...]) 
         self.progress_buf[env_ids] = 0
         self.reset_buf[env_ids] = 0
 
-        for i in env_ids:
-            if i in self.active_ids:
-                self.active_ids.remove(i)
-                self.reset_count_down[i] = 10
+
 
     def reset(self):
         """
