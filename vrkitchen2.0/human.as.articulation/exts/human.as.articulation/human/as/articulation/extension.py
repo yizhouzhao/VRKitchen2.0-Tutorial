@@ -10,10 +10,13 @@ import carb
 import time
 import numpy as np
 
-from .constants import *
-from .rl.humanoid_env import HumanoidEnv
-from .rl.utils import *
-from .rl.trainer import Trainer
+import os, sys
+sys.path.append(os.path.dirname(__file__))
+
+from constants import *
+from rl.humanoid_env import HumanoidEnv
+from rl.utils import *
+from rl.trainer import Trainer
 
 
 # Any class derived from `omni.ext.IExt` in top level module (defined in `python.modules` of `extension.toml`) will be
