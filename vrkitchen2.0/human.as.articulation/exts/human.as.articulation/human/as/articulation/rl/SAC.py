@@ -61,7 +61,7 @@ class Actor(nn.Module):
 
     def forward(self, state, compute_pi=True, compute_log_pi=True):
 
-        power = state[:, -1]
+        power = torch.ones(state.shape[0]).to(state.device)
 
         mu, log_std = self.trunk(state).chunk(2, dim=-1)
 
@@ -122,12 +122,12 @@ class SAC(nn.Module):
             init_temperature=0.1,
             alpha_lr=1e-4,
             alpha_beta=0.9,
-            actor_lr=1e-4,
+            actor_lr=1e-3,
             actor_beta=0.9,
             actor_log_std_min=-5,
             actor_log_std_max=2,
             policy_freq=1,
-            critic_lr=1e-4,
+            critic_lr=1e-3,
             critic_beta=0.9,
             tau=0.005,
             critic_target_update_freq=2,

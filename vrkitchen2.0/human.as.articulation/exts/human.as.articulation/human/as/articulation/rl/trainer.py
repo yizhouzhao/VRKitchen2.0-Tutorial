@@ -3,7 +3,6 @@ import torch
 import os
 
 from rl.utils import ReplayBuffer
-from rl.humanoid_env import HumanoidEnv
 from rl.SAC import SAC
 
 class Trainer():
@@ -12,7 +11,7 @@ class Trainer():
         self.act_dim = act_dim
         
         # buffer
-        self.buf = ReplayBuffer(obs_dim, act_dim, args=None, max_size=int(1e6))
+        self.buf = ReplayBuffer(obs_dim, act_dim, args=None, max_size=int(1e4))
 
         # policy
         self.policy = SAC(obs_dim, act_dim,
@@ -26,7 +25,7 @@ class Trainer():
                           args=None)
 
         self.device = self.policy.device
-        self.warm_up_steps = 100
+        self.warm_up_steps = 1000
 
     def sample_action(self, current_obs):
          with torch.no_grad():
@@ -36,5 +35,5 @@ class Trainer():
             return pi.cpu().data
             
     
-    def train_debug(self):
-        self.policy.train(self.buf, 16)
+    def train_debug(self, batch_size = 16):
+        self.policy.train(self.buf, batch_size)

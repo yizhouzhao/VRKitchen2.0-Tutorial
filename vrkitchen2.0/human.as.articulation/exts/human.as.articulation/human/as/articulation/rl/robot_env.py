@@ -12,9 +12,10 @@ from constants import humanoid_motor_effort
 from rl.torch_utils import *
 from rl.torch_jit_utils import *
 
-class HumanoidEnv(gym.Env):
+class RobotEnv(gym.Env):
     def __init__(self, 
             prim_paths_expr = "/World/envs/*/humanoid/torso",
+            motor_efforts = humanoid_motor_effort,
             backend = "torch",
             device = torch.device("cpu")
         ):
@@ -23,11 +24,9 @@ class HumanoidEnv(gym.Env):
         self.prim_paths_expr = prim_paths_expr
         self.backend = backend
         self.device = device
+        self.motor_efforts =motor_efforts
 
         # stats
-        self.obs_dim = 75 - 21
-        self.num_obs = self.obs_dim
-        self.act_dim = 21
         # self.observation_space = spaces.Box(np.ones(self.num_obs) * -np.Inf, np.ones(self.num_obs) * np.Inf, dtype=np.float32)
         # self.action_space = spaces.Box(np.ones(self.num_actions) * -1., np.ones(self.num_actions) * 1., dtype=np.float32)
 
@@ -44,21 +43,17 @@ class HumanoidEnv(gym.Env):
 
         """
         # allocate buffers
-        self.obs_buf = torch.zeros(
-            (self.num_envs, self.num_obs), device=self.device, dtype=torch.float)
+        # self.obs_buf = torch.zeros(
+        #     (self.num_envs, self.num_obs), device=self.device, dtype=torch.float)
         # self.states_buf = torch.zeros(
         #     (self.num_envs, self.num_states), device=self.device, dtype=torch.float)
-        self.rew_buf = torch.zeros(
+        self.reward_buf = torch.zeros(
             self.num_envs, device=self.device, dtype=torch.float)
         self.reset_buf = torch.zeros(
             self.num_envs, device=self.device, dtype=torch.long)
-        self.timeout_buf = torch.zeros(
-             self.num_envs, device=self.device, dtype=torch.long)
         self.progress_buf = torch.zeros(
             self.num_envs, device=self.device, dtype=torch.long)
-        self.randomize_buf = torch.zeros(
-            self.num_envs, device=self.device, dtype=torch.long)
-        self.extras = {}
+
 
     def start(self):
         # simulation context
@@ -84,10 +79,10 @@ class HumanoidEnv(gym.Env):
         self.dof_vel = self.robots.get_joint_velocities()
         self.initial_dof_vel = self.dof_vel.clone()
 
-        self.dof_force = self.robots._physics_view.get_force_sensor_forces()
+        # self.dof_force = self.robots._physics_view.get_force_sensor_forces()
 
         # joint motor effort 
-        self.motor_efforts = self.robots._backend_utils.convert(humanoid_motor_effort, self.device)
+        self.motor_efforts = self.robots._backend_utils.convert(self.motor_efforts, self.device)
         self.robots.set_max_efforts(self.motor_efforts.expand(self.num_envs, -1))
         # self.robots._physics_view.set_dof_max_velocities(100 * torch.ones((self.num_envs, 21)), self.robot_indices)
         
@@ -128,7 +123,8 @@ class HumanoidEnv(gym.Env):
         self.allocate_buffers()
         self.compute_observations()
 
-        # 
+        # shape
+        self.action_shape = self.robots._default_joints_state.positions.shape
         print("default joint state", self.robots._default_joints_state.positions, self.robots._default_joints_state.velocities, \
             self.robots._default_joints_state.efforts)
      
@@ -200,10 +196,13 @@ class HumanoidEnv(gym.Env):
         up_reward = torch.zeros_like(heading_reward)
         up_reward = torch.where(self.up_proj > 0.93, up_reward + self.up_weight, up_reward)
 
+        # TODO: reward design
         total_reward = up_reward + heading_reward 
 
         # print("heading_proj", self.heading_proj, heading_reward)
         # print("up_proj", self.up_proj, up_reward)
+
+        self.reward_buf += total_reward
 
         # reset agents
         reset = torch.where(self.obs_buf[:, 0] < self.termination_height, torch.ones_like(self.reset_buf), self.reset_buf)
@@ -237,8 +236,10 @@ class HumanoidEnv(gym.Env):
             # if self.backend == "numpy":
             #     self.actions = 1.0 * np.random.uniform(-1, 1, (len(self.active_ids), len(humanoid_motor_effort)))
             # else: # torch
-            self.actions = 2 * torch.rand(self.num_envs, len(humanoid_motor_effort)) - 1
+            self.actions = 2 * torch.rand(self.num_envs, len(self.motor_efforts)) - 1
             self.actions = self.actions.to(self.device)
+        else:
+            self.actions = actions
 
         # print("actions", self.actions.shape, self.actions)
         self.actions = self.actions * self.motor_efforts 
@@ -283,7 +284,7 @@ class HumanoidEnv(gym.Env):
         # self.robots.set_world_poses(self.robot_states[0][env_ids,...], self.robot_states[1][env_ids,...], self.robot_indices[env_ids,...]) 
         self.progress_buf[env_ids] = 0
         self.reset_buf[env_ids] = 0
-
+        self.reward_buf[env_ids] = 0
 
 
     def reset(self):

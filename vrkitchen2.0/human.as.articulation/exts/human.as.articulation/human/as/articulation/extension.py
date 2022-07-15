@@ -14,9 +14,12 @@ import os, sys
 sys.path.append(os.path.dirname(__file__))
 
 from constants import *
-from rl.humanoid_env import HumanoidEnv
+from rl.robot_env import RobotEnv
 from rl.utils import *
 from rl.trainer import Trainer
+
+# go to directory: vrkitchen2.0/human.as.articulation/exts/human.as.articulation/human/as/articulation
+# start notebook from: /home/yizhou/.local/share/ov/pkg/isaac_sim-2022.1.0/jupyter_notebook.sh
 
 
 # Any class derived from `omni.ext.IExt` in top level module (defined in `python.modules` of `extension.toml`) will be
@@ -209,7 +212,7 @@ class MyExtension(omni.ext.IExt):
         stage = omni.usd.get_context().get_stage()
 
         # start env
-        self.env = HumanoidEnv()
+        self.env = RobotEnv()
 
 
         self._setup_callbacks()
