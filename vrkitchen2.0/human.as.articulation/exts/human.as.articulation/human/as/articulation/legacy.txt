@@ -34,3 +34,51 @@
         after the on_tensor_start method is called if the tensor API is enabled.
         """
         pass
+
+
+# for i in range(5):
+#     total_step += 1
+#     # copy old obs
+#     old_obs_buf = env.obs_buf.clone()
+    
+#     # step
+#     if total_step < trainer.warm_up_steps or np.random.rand() < 1000 / total_step:
+#         actions = 2 * torch.rand(env.num_envs, 21) - 1
+#         actions = actions.to(env.device)
+#     else:
+#         actions = trainer.sample_action(old_obs_buf)
+        
+#     env.step(actions)
+#     world.step(render=False)
+    
+#     # renew obs
+#     env.compute_observations()
+#     new_obs_buf = env.obs_buf.clone()
+#     reward, done = env.compute_reward()
+    
+#     # stack memory
+#     if torch.max(new_obs_buf) < 1e3:
+#         # only record reasonble results
+#         trainer.buf.add_batch(old_obs_buf, actions, new_obs_buf, reward, done)
+    
+#     if total_step % 100 == 0:
+#         world.render()
+#         # print(total_step, "obs peek", "reward: ", *reward.tolist(), "\n done: ", *done.tolist())
+#         print("total_step:", total_step, torch.mean(env.reward_buf).item())
+        
+#     if total_step % 1000 < 30:
+#         world.render()
+    
+#     # need to reset
+#     if torch.sum(done) >= 1:
+#         env_ids = []
+#         for i in range(len(done)):
+#             if done[i] > 0:
+#                 env_ids.append(i)
+
+#         env.reset_idx(env_ids)
+        
+#     # train
+#     if trainer.buf.size > 1000:
+#         # print("training sac")
+#         trainer.train_debug()

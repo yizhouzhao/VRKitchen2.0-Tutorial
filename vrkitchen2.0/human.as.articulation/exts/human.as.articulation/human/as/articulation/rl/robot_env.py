@@ -4,13 +4,16 @@ import numpy as np
 import torch
 import carb
 import omni
+from PIL import Image
 
 from omni.isaac.core.robots.robot_view import RobotView
 from omni.isaac.core import World, SimulationContext
+from omni.isaac.synthetic_utils import SyntheticDataHelper
 
 from constants import humanoid_motor_effort
 from rl.torch_utils import *
 from rl.torch_jit_utils import *
+
 
 class RobotEnv(gym.Env):
     def __init__(self, 
@@ -34,6 +37,22 @@ class RobotEnv(gym.Env):
         self.heading_weight = 0.5
         self.up_weight = 0.1
         self.termination_height = 0.8
+
+        # render
+        self._sd_helper = SyntheticDataHelper()
+        self._viewport_window = omni.kit.viewport_legacy.get_default_viewport_window()
+        self._sd_helper.initialize(sensor_names=["rgb"], viewport=self._viewport_window)
+    
+    def render_img(self):
+        gt = self._sd_helper.get_groundtruth(
+            [
+                "rgb",
+            ],
+            self._viewport_window,
+            verify_sensor_init=False,
+        )
+
+        return gt["rgb"]
 
     def allocate_buffers(self):
         """Allocate the observation, states, etc. buffers.
@@ -84,35 +103,17 @@ class RobotEnv(gym.Env):
         # joint motor effort 
         self.motor_efforts = self.robots._backend_utils.convert(self.motor_efforts, self.device)
         self.robots.set_max_efforts(self.motor_efforts.expand(self.num_envs, -1))
-        # self.robots._physics_view.set_dof_max_velocities(100 * torch.ones((self.num_envs, 21)), self.robot_indices)
+        self.robots._physics_view.set_dof_max_velocities(100 * torch.ones((self.num_envs, 21)), self.robot_indices)
         
         self.robots.set_solver_position_iteration_counts(32 * torch.ones(self.num_envs))
         self.robots.set_solver_velocity_iteration_counts(32 * torch.ones(self.num_envs))
         
-
-        # direction
-        self.up_axis_idx = 1 # Y = 1, Z = 2 
-        self.up_vec = to_torch(get_axis_params(1., self.up_axis_idx), device=self.device).repeat((self.num_envs, 1))
-        self.heading_vec = to_torch([1, 0, 0], device=self.device).repeat((self.num_envs, 1))
-        self.start_rotation = torch.tensor([-0.5, -0.5, -0.5, 0.5], device=self.device)
-        self.inv_start_rot = quat_conjugate(self.start_rotation).repeat((self.num_envs, 1)) #?
-        self.start_rotation = self.start_rotation.repeat((self.num_envs, 1))
-
-        # print("inv_start_rot", quat_mul(self.start_rotation, self.inv_start_rot))
+        # get joint limit
+        self.joint_lower_limit = self.robots.get_dof_limits()[0,:,0]
+        self.joint_upper_limit = self.robots.get_dof_limits()[0,:,1]
         
-
-        self.basis_vec0 = self.heading_vec.clone()
-        self.basis_vec1 = self.up_vec.clone()
-
-        # print("backend force?", self.robots._physics_view.get_force_sensor_forces().shape, )
-        # print("dof_pos?", self.dof_pos.shape, "dof_vel?", self.dof_pos.shape, \
-        #     "heading_vec?", self.heading_vec.shape, "up_vec?", self.up_vec, "inv_start_rot?", self.inv_start_rot)
-
-        self.targets = to_torch([1000, 0, 0], device=self.device).repeat((self.num_envs, 1))
-        self.target_dirs = to_torch([1, 0, 0], device=self.device).repeat((self.num_envs, 1))
-
         # constants
-        self.dt = 1 / 60
+        self.dt = 1 / 30
         self.potentials = to_torch([-1000./self.dt], device=self.device).repeat(self.num_envs)
         self.prev_potentials = self.potentials.clone()
         self.angular_velocity_scale = 0.1
@@ -121,7 +122,7 @@ class RobotEnv(gym.Env):
 
         # buffers
         self.allocate_buffers()
-        self.compute_observations()
+        # self.compute_observations()
 
         # shape
         self.action_shape = self.robots._default_joints_state.positions.shape
@@ -268,11 +269,11 @@ class RobotEnv(gym.Env):
 
         self.robots.set_world_poses(self.robots._default_state.positions[env_ids,...], self.robots._default_state.orientations[env_ids,...], indices=env_ids)
         self.robots.set_joint_positions(self.robots._default_joints_state.positions[env_ids,...], indices=env_ids)
-        # self.robots.set_joint_position_targets(self.robots._default_joints_state.positions[env_ids,...], indices=env_ids)
+        self.robots.set_joint_position_targets(self.robots._default_joints_state.positions[env_ids,...], indices=env_ids)
         
         
         self.robots.set_joint_velocities(self.robots._default_joints_state.velocities[env_ids,...], indices=env_ids)
-        # self.robots.set_joint_velocity_targets(self.robots._default_joints_state.velocities[env_ids,...], indices=env_ids)
+        self.robots.set_joint_velocity_targets(self.robots._default_joints_state.velocities[env_ids,...], indices=env_ids)
         
         self.robots.set_joint_efforts(self.robots._default_joints_state.efforts[env_ids,...], indices=env_ids)
         self.robots.set_gains(kps=self.robots._default_kps[env_ids,...], kds=self.robots._default_kds[env_ids,...], indices=env_ids)
