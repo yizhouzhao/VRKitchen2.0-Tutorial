@@ -18,8 +18,9 @@ from rl.robot_env import RobotEnv
 from rl.utils import *
 from rl.trainer import Trainer
 
-# go to directory: vrkitchen2.0/human.as.articulation/exts/human.as.articulation/human/as/articulation
-# start notebook from: /home/yizhou/.local/share/ov/pkg/isaac_sim-2022.1.0/jupyter_notebook.sh
+# go to directory: cd Research/VRKitchen2.0-Tutorial/
+# vrkitchen2.0/human.as.articulation/exts/human.as.articulation/human/as/articulation
+# # start notebook from: /home/yizhou/.local/share/ov/pkg/isaac_sim-2022.1.0/jupyter_notebook.sh
 
 
 # Any class derived from `omni.ext.IExt` in top level module (defined in `python.modules` of `extension.toml`) will be
