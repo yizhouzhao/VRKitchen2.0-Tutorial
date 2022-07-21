@@ -267,7 +267,11 @@ class RobotEnv(gym.Env):
         # self.robots.set_joint_velocities(torch.zeros_like(self.initial_dof_vel), indices = self.robot_indices[env_ids,...])
         # self.robots.set_joint_efforts(efforts = torch.zeros_like(self.initial_dof_vel), indices = self.robot_indices)
 
+        # root
         self.robots.set_world_poses(self.robots._default_state.positions[env_ids,...], self.robots._default_state.orientations[env_ids,...], indices=env_ids)
+        self.robots.set_velocities(torch.zeros((self.num_envs), 6)[env_ids,...], indices=env_ids)
+        
+        #  dof
         self.robots.set_joint_positions(self.robots._default_joints_state.positions[env_ids,...], indices=env_ids)
         self.robots.set_joint_position_targets(self.robots._default_joints_state.positions[env_ids,...], indices=env_ids)
         
