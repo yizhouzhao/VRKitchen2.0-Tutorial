@@ -24,14 +24,14 @@ class Trainer():
         self.writer = SummaryWriter() if use_tensorboard else None
 
         # buffer
-        self.buf = ReplayBuffer(obs_dim, act_dim, args=None, max_size=int(1e5))
+        self.buf = ReplayBuffer(obs_dim, act_dim, args=None, max_size=int(1e6))
 
         # policy
         self.policy = SAC(obs_dim, act_dim,
                           init_temperature=0.1,
-                          alpha_lr=1e-3,
-                          actor_lr=1e-3,
-                          critic_lr=1e-3,
+                          alpha_lr=1e-4,
+                          actor_lr=1e-4,
+                          critic_lr=1e-4,
                           tau=0.005,
                           discount=0.99,
                           critic_target_update_freq=2,
@@ -55,8 +55,18 @@ class Trainer():
         self.policy.train(self.buf, batch_size)
 
     def write_summary(self):
-        self.writer.add_scalar('Loss/reward_mean', torch.mean(self.env.reward_buf), \
+        self.writer.add_scalar('Reward/reward_mean', torch.mean(self.env.reward_buf), \
             self.total_training_step)
-        self.writer.add_scalar('Loss/reward_max', torch.max(self.env.reward_buf), \
+        self.writer.add_scalar('Reward/reward_max', torch.max(self.env.reward_buf), \
             self.total_training_step)
+        if len(self.policy.loss_dict["critic"]) > 10:
+            self.writer.add_scalar('Loss/critic', np.mean(self.policy.loss_dict["critic"][-10:]), \
+                self.total_training_step)
+            self.writer.add_scalar('Loss/actor', np.mean(self.policy.loss_dict["actor"][-10:]), \
+                self.total_training_step)
+            self.writer.add_scalar('Loss/temperature', np.mean(self.policy.loss_dict["temperature"][-10:]), \
+                self.total_training_step)
+            self.writer.add_scalar('Loss/temperature_value', np.mean(self.policy.loss_dict["temperature_value"][-10:]), \
+                self.total_training_step)
+        
     

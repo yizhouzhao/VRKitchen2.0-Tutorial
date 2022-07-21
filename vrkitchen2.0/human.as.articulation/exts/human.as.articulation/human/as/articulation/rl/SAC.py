@@ -83,7 +83,7 @@ class Actor(nn.Module):
         else:
             log_pi = None
 
-        mu, pi, log_pi = squash(mu, pi, log_pi, power)
+        mu, pi, log_pi = squash(0.1 * mu, 0.1 * pi, log_pi, power)
 
         return mu, pi, log_pi, log_std
 
@@ -126,7 +126,7 @@ class SAC(nn.Module):
             actor_beta=0.9,
             actor_log_std_min=-5,
             actor_log_std_max=2,
-            policy_freq=1,
+            policy_freq=20,
             critic_lr=1e-3,
             critic_beta=0.9,
             tau=0.005,
