@@ -387,21 +387,33 @@ class MyExtension(omni.ext.IExt):
     
     def convert_file(self):
         print("convert file test")
+        import os
+        from pathlib import Path
+
+        object_folder = "D:/research/SAMP/Assets/Palette/SAMP/models/Sofas"
+        obj_name_list = []
+        for f in os.listdir(object_folder):
+            if os.path.isdir(os.path.join(object_folder, f)):
+                obj_name_list.append(f)
 
         async def convert_file_async():
-            from pathlib import Path
+            
+            for obj_index in range(len(obj_name_list)):
 
-            test_data_path = "E:/researches/VRKitchen2.0-Tutorial/asset/mixamo/Silly Dancing.fbx"
-            converter_manager = omni.kit.asset_converter.get_instance()
-            context = omni.kit.asset_converter.AssetConverterContext()
-            context.keep_all_materials = True
-            context.merge_all_meshes = True
-            output_path = "E:/researches/VRKitchen2.0-Tutorial/asset/mixamo/silly_dancing_converted.usd"
-            task = converter_manager.create_converter_task(test_data_path, output_path, None, context)
-      
-            success = await task.wait_until_finished()
-            assert success, "convert not successful"
-            assert Path(output_path).is_file()
+                test_data_path = os.path.join(object_folder, obj_name_list[obj_index], "models", "model_normalized.obj")
+                # test_data_path = "E:/researches/VRKitchen2.0-Tutorial/asset/mixamo/Silly Dancing.fbx"
+                converter_manager = omni.kit.asset_converter.get_instance()
+                context = omni.kit.asset_converter.AssetConverterContext()
+                context.keep_all_materials = True
+                context.merge_all_meshes = True
+                
+                #output_path = "E:/researches/VRKitchen2.0-Tutorial/asset/mixamo/silly_dancing_converted.usd"
+                output_path = os.path.join("E:/researches/VRKitchen2.0-Tutorial/asset/samp/", obj_name_list[obj_index], "model.usd")
+                task = converter_manager.create_converter_task(test_data_path, output_path, None, context)
+        
+                success = await task.wait_until_finished()
+                assert success, "convert not successful"
+                assert Path(output_path).is_file(), f"wrong output path {output_path}"
 
         
         asyncio.ensure_future(convert_file_async())
