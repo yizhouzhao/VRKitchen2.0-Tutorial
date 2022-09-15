@@ -22,6 +22,9 @@ Get app version
     app_version = str(carb.settings.get_settings().get("/app/version"))
     # 2022.1.1, e.t.c.
 
+Persist preferences changes
+################################
 
+`Change the setting permanently <https://forums.developer.nvidia.com/t/persist-preferences-changes/202831>`_
 
 
