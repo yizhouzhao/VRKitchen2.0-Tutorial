@@ -95,3 +95,25 @@ Set up physical material
         # apply material
         physicsUtils.add_physics_material_to_prim(self._stage, prim, self._physicsMaterialPath)
 
+Set up force
+#########################################################
+
+.. code-block:: python
+
+    from pxr import PhysxSchema
+    xform = UsdGeom.Xform.Define(stage, shuttleForcePath)
+    forceApi = PhysxSchema.PhysxForceAPI.Apply(xform.GetPrim()) 
+
+    forceAttr = forceApi.GetForceAttr()
+    forceAttr.Set(time=0, value=Gf.Vec3f(0.0, 0.0, 1000.0))
+    forceAttr.Set(time=20, value=Gf.Vec3f(0.0, 0.0, 1200.0))
+    forceAttr.Set(time=50, value=Gf.Vec3f(0.0, 0.0, 1700.0))        
+
+    forceEnabledAttr = forceApi.GetForceEnabledAttr()
+    forceEnabledAttr.Set(time=0, value=True)
+    forceEnabledAttr.Set(time=50, value=False)
+    
+    xformable = UsdGeom.Xformable(xform.GetPrim())
+    translateOp = xformable.AddTranslateOp()
+    translateOp.Set(time=0, value = Gf.Vec3d(0.0, 0.0, 0.0))        
+    translateOp.Set(time=50, value = Gf.Vec3d(0.0, -1.0, 0.0))   
