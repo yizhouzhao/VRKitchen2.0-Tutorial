@@ -98,20 +98,27 @@ Set up physical material
 Set up force
 #########################################################
 
+The `forceAPI` is will a Xform. Pushing the parent `Xform`. e.g. .../Xform_ball/ballForce is pushing .../Xform_ball
+
 .. code-block:: python
 
-    from pxr import PhysxSchema
-    xform = UsdGeom.Xform.Define(stage, shuttleForcePath)
+    import omni.timeline
+    from pxr import PhysxSchema, UsdGeom, Gf
+    stage = omni.usd.get_context().get_stage()
+
+    # changing timeline end time to avoid looping
+    omni.timeline.get_timeline_interface().set_end_time(10000/24)
+
+    xform = UsdGeom.Xform.Define(stage, "/World/ball1_04/Xform_01/ballForce")
     forceApi = PhysxSchema.PhysxForceAPI.Apply(xform.GetPrim()) 
 
     forceAttr = forceApi.GetForceAttr()
-    forceAttr.Set(time=0, value=Gf.Vec3f(0.0, 0.0, 1000.0))
-    forceAttr.Set(time=20, value=Gf.Vec3f(0.0, 0.0, 1200.0))
-    forceAttr.Set(time=50, value=Gf.Vec3f(0.0, 0.0, 1700.0))        
+    forceAttr.Set(time=0, value=Gf.Vec3f(0.0, 0, 300.0))
+    forceAttr.Set(time=20, value=Gf.Vec3f(0.0, 0, 300.0))       
 
     forceEnabledAttr = forceApi.GetForceEnabledAttr()
     forceEnabledAttr.Set(time=0, value=True)
-    forceEnabledAttr.Set(time=50, value=False)
+    forceEnabledAttr.Set(time=20, value=False)
     
     xformable = UsdGeom.Xformable(xform.GetPrim())
     translateOp = xformable.AddTranslateOp()
