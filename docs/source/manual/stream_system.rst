@@ -21,6 +21,7 @@ Physics update
 #########################################################
 
 .. code-block:: python
+
     self._physics_update_sub = omni.physx.get_physx_interface().subscribe_physics_step_events(self._on_physics_step)
     
     def _on_physics_step(self, dt):
@@ -44,6 +45,7 @@ Stage event
 #########################################################
 
 .. code-block:: python
+    
     stage_event_stream = self._usd_context.get_stage_event_stream()
             self._stage_event_sub = stage_event_stream.create_subscription_to_pop(self._on_stage_event)
 
