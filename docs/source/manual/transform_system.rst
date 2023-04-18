@@ -32,8 +32,11 @@ Get translate/orient/scale (from transform matrix)
 
     # or new verion
     # from omni.usd.utils import get_world_transform_matrix, get_local_transform_matrix
-
+  
     mat = get_world_transform_matrix(prim) 
+    
+    # or 
+    # mat = UsdGeom.Xformable(usd_prim).ComputeLocalToWorldTransform(time)
 
     # or local
     mat = get_local_transform_matrix(prim) 
